@@ -1,0 +1,76 @@
+/* Site-wide styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.footer {
+    padding: 20px 0;
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Card enhancements */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Button spacing */
+.btn {
+    margin-right: 5px;
+}
+
+/* Alert positioning */
+.alert {
+    margin-bottom: 20px;
+}
+
+/* GridView styling */
+.table {
+    margin-top: 20px;
+}
+
+.table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 600;
+}
+
+/* Kanban specific styles */
+.kanban-column {
+    min-height: 500px;
+}
+
+.ticket-card {
+    transition: all 0.3s ease;
+}
+
+.ticket-card:hover {
+    transform: scale(1.02);
+}
+
+/* Dashboard cards */
+.card h2 {
+    margin: 0;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .kanban-column {
+        min-height: 300px;
+        margin-bottom: 20px;
+    }
+}
