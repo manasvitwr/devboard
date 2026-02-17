@@ -67,8 +67,13 @@ namespace DevBoard.Services
                 var owner = pathParts[0];
                 var repo = pathParts[1];
 
+                if (repo.EndsWith(".git"))
+                {
+                    repo = repo.Substring(0, repo.Length - 4);
+                }
+
                 // Construct raw GitHub URL
-                var rawUrl = string.Format("https://raw.githubusercontent.com/{0}/{1}/main/{2}", owner, repo, project.ConfigPath);
+                var rawUrl = $"https://raw.githubusercontent.com/{owner}/{repo}/main/{project.ConfigPath}";
 
                 using (var httpClient = new HttpClient())
                 {

@@ -89,7 +89,7 @@ namespace DevBoard
             CreatePanel.Visible = false;
         }
 
-        protected void ProjectsRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
+        protected async void ProjectsRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int projectId = int.Parse(e.CommandArgument.ToString());
 
@@ -123,7 +123,7 @@ namespace DevBoard
             {
                 try
                 {
-                    _projectService.SyncModulesFromGitHubAsync(projectId).Wait();
+                    await _projectService.SyncModulesFromGitHubAsync(projectId);
                     ShowMessage("Modules synced successfully from GitHub!", "alert-success");
                     BindProjects();
                 }

@@ -1,4 +1,4 @@
-<%@ Page Title="Projects" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
+<%@ Page Title="Projects" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" Async="true"
     CodeBehind="Projects.aspx.cs" Inherits="DevBoard.Projects" %>
 
     <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
@@ -72,18 +72,18 @@
                                 <a href='<%# "Modules.aspx?projectId=" + Eval("Id") %>' class="btn btn-sm btn-info">View
                                     Modules</a>
                                 <% if (User.IsInRole("Admin") || User.IsInRole("Dev")) { %>
-                                    <%# !string.IsNullOrEmpty(Eval("RepoUrl") as string)
-                                        ? "<asp:LinkButton ID='SyncButton' runat='server' CssClass='btn btn-sm btn-success' CommandName='Sync' CommandArgument='"
-                                        + Eval("Id") + "'><i class='bi bi-arrow-repeat'></i> Sync</asp:LinkButton>" : ""
-                                        %>
-                                        <asp:LinkButton ID="EditButton" runat="server" CssClass="btn btn-sm btn-warning"
-                                            CommandName="Edit" CommandArgument='<%# Eval("Id") %>'>Edit</asp:LinkButton>
-                                        <asp:LinkButton ID="DeleteButton" runat="server"
-                                            CssClass="btn btn-sm btn-danger" CommandName="Delete"
-                                            CommandArgument='<%# Eval("Id") %>'
-                                            OnClientClick="return confirm('Are you sure you want to delete this project?');">
-                                            Delete</asp:LinkButton>
-                                        <% } %>
+                                    <asp:LinkButton ID="SyncButton" runat="server" CssClass="btn btn-sm btn-success"
+                                        CommandName="Sync" CommandArgument='<%# Eval("Id") %>'
+                                        Visible='<%# !string.IsNullOrEmpty(Eval("RepoUrl") as string) %>'>
+                                        <i class="bi bi-arrow-repeat"></i> Sync
+                                    </asp:LinkButton>
+                                    <asp:LinkButton ID="EditButton" runat="server" CssClass="btn btn-sm btn-warning"
+                                        CommandName="Edit" CommandArgument='<%# Eval("Id") %>'>Edit</asp:LinkButton>
+                                    <asp:LinkButton ID="DeleteButton" runat="server" CssClass="btn btn-sm btn-danger"
+                                        CommandName="Delete" CommandArgument='<%# Eval("Id") %>'
+                                        OnClientClick="return confirm('Are you sure you want to delete this project?');">
+                                        Delete</asp:LinkButton>
+                                    <% } %>
                             </div>
                         </div>
                     </div>
