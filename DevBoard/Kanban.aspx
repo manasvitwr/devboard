@@ -55,7 +55,11 @@
                         <asp:Panel ID="TodoPanel" runat="server" CssClass="kanban-column" data-status="0">
                             <asp:Repeater ID="TodoRepeater" runat="server">
                                 <ItemTemplate>
+<<<<<<< HEAD
                                     <div class="ticket-card" data-ticket-id="<%# Eval(" Id") %>">
+=======
+                                    <div class="ticket-card" data-ticket-id="<%# Eval("Id") %>">
+>>>>>>> b25426f (temp: save local fixes)
                                         <h6>
                                             <%# Eval("Title") %>
                                         </h6>
@@ -65,6 +69,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
+<<<<<<< HEAD
                                                     class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("
                                                     Type")) %>"><%# Eval("Type") %></span>
                                                 <span
@@ -74,13 +79,26 @@
                                             <div class="vote-section">
                                                 <button type="button" class="btn btn-sm btn-outline-success vote-btn"
                                                     data-ticket-id="<%# Eval(" Id") %>" data-value="1">
+=======
+                                                    class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>"><%# Eval("Type") %></span>
+                                                <span
+                                                    class="badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>"><%# Eval("Priority") %></span>
+                                            </div>
+                                            <div class="vote-section">
+                                                <button type="button" class="btn btn-sm btn-outline-success vote-btn"
+                                                    data-ticket-id="<%# Eval("Id") %>" data-value="1">
+>>>>>>> b25426f (temp: save local fixes)
                                                     <i class="bi bi-hand-thumbs-up"></i>
                                                 </button>
                                                 <span class="badge bg-secondary">
                                                     <%# GetTicketScore((int)Eval("Id")) %>
                                                 </span>
                                                 <button type="button" class="btn btn-sm btn-outline-danger vote-btn"
+<<<<<<< HEAD
                                                     data-ticket-id="<%# Eval(" Id") %>" data-value="-1">
+=======
+                                                    data-ticket-id="<%# Eval("Id") %>" data-value="-1">
+>>>>>>> b25426f (temp: save local fixes)
                                                     <i class="bi bi-hand-thumbs-down"></i>
                                                 </button>
                                             </div>
@@ -96,7 +114,11 @@
                         <asp:Panel ID="InProgressPanel" runat="server" CssClass="kanban-column" data-status="1">
                             <asp:Repeater ID="InProgressRepeater" runat="server">
                                 <ItemTemplate>
+<<<<<<< HEAD
                                     <div class="ticket-card" data-ticket-id="<%# Eval(" Id") %>">
+=======
+                                    <div class="ticket-card" data-ticket-id="<%# Eval("Id") %>">
+>>>>>>> b25426f (temp: save local fixes)
                                         <h6>
                                             <%# Eval("Title") %>
                                         </h6>
@@ -106,6 +128,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
+<<<<<<< HEAD
                                                     class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("
                                                     Type")) %>"><%# Eval("Type") %></span>
                                                 <span
@@ -115,13 +138,26 @@
                                             <div class="vote-section">
                                                 <button type="button" class="btn btn-sm btn-outline-success vote-btn"
                                                     data-ticket-id="<%# Eval(" Id") %>" data-value="1">
+=======
+                                                    class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>"><%# Eval("Type") %></span>
+                                                <span
+                                                    class="badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>"><%# Eval("Priority") %></span>
+                                            </div>
+                                            <div class="vote-section">
+                                                <button type="button" class="btn btn-sm btn-outline-success vote-btn"
+                                                    data-ticket-id="<%# Eval("Id") %>" data-value="1">
+>>>>>>> b25426f (temp: save local fixes)
                                                     <i class="bi bi-hand-thumbs-up"></i>
                                                 </button>
                                                 <span class="badge bg-secondary">
                                                     <%# GetTicketScore((int)Eval("Id")) %>
                                                 </span>
                                                 <button type="button" class="btn btn-sm btn-outline-danger vote-btn"
+<<<<<<< HEAD
                                                     data-ticket-id="<%# Eval(" Id") %>" data-value="-1">
+=======
+                                                    data-ticket-id="<%# Eval("Id") %>" data-value="-1">
+>>>>>>> b25426f (temp: save local fixes)
                                                     <i class="bi bi-hand-thumbs-down"></i>
                                                 </button>
                                             </div>
@@ -137,7 +173,11 @@
                         <asp:Panel ID="DonePanel" runat="server" CssClass="kanban-column" data-status="2">
                             <asp:Repeater ID="DoneRepeater" runat="server">
                                 <ItemTemplate>
+<<<<<<< HEAD
                                     <div class="ticket-card" data-ticket-id="<%# Eval(" Id") %>">
+=======
+                                    <div class="ticket-card" data-ticket-id="<%# Eval("Id") %>">
+>>>>>>> b25426f (temp: save local fixes)
                                         <h6>
                                             <%# Eval("Title") %>
                                         </h6>
@@ -147,6 +187,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
+<<<<<<< HEAD
                                                     class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("
                                                     Type")) %>"><%# Eval("Type") %></span>
                                                 <span
@@ -156,13 +197,26 @@
                                             <div class="vote-section">
                                                 <button type="button" class="btn btn-sm btn-outline-success vote-btn"
                                                     data-ticket-id="<%# Eval(" Id") %>" data-value="1">
+=======
+                                                    class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>"><%# Eval("Type") %></span>
+                                                <span
+                                                    class="badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>"><%# Eval("Priority") %></span>
+                                            </div>
+                                            <div class="vote-section">
+                                                <button type="button" class="btn btn-sm btn-outline-success vote-btn"
+                                                    data-ticket-id="<%# Eval("Id") %>" data-value="1">
+>>>>>>> b25426f (temp: save local fixes)
                                                     <i class="bi bi-hand-thumbs-up"></i>
                                                 </button>
                                                 <span class="badge bg-secondary">
                                                     <%# GetTicketScore((int)Eval("Id")) %>
                                                 </span>
                                                 <button type="button" class="btn btn-sm btn-outline-danger vote-btn"
+<<<<<<< HEAD
                                                     data-ticket-id="<%# Eval(" Id") %>" data-value="-1">
+=======
+                                                    data-ticket-id="<%# Eval("Id") %>" data-value="-1">
+>>>>>>> b25426f (temp: save local fixes)
                                                     <i class="bi bi-hand-thumbs-down"></i>
                                                 </button>
                                             </div>
