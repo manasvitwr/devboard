@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DevBoard.Services
 {
-    public class ProjectService
+    public partial class ProjectService
     {
         private readonly DevBoardContext _context;
 
@@ -128,5 +128,75 @@ namespace DevBoard.Services
     {
         public string Name { get; set; }
         public string Path { get; set; }
+    }
+
+    public class GitHubIssueDto
+    {
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("body")]
+        public string Body { get; set; }
+
+        [JsonProperty("labels")]
+        public List<string> Labels { get; set; }
+    }
+
+    public partial class ProjectService
+    {
+        public async Task<string> CreateGitHubIssueAsync(int projectId, Ticket ticket)
+        {
+            var project = _context.Projects.Find(projectId);
+            if (project == null || string.IsNullOrEmpty(project.RepoUrl))
+                throw new InvalidOperationException("Project not found or RepoUrl is empty");
+
+            var token = System.Web.Configuration.WebConfigurationManager.AppSettings["GitHubPersonalAccessToken"];
+            if (string.IsNullOrEmpty(token))
+                throw new InvalidOperationException("GitHub Personal Access Token is not configured.");
+
+            try
+            {
+                var uri = new Uri(project.RepoUrl);
+                var pathParts = uri.AbsolutePath.Trim('/').Split('/');
+                if (pathParts.Length < 2) throw new InvalidOperationException("Invalid GitHub URL");
+
+                var owner = pathParts[0];
+                var repo = pathParts[1].EndsWith(".git") ? pathParts[1].Substring(0, pathParts[1].Length - 4) : pathParts[1];
+
+                var apiUrl = $"https://api.github.com/repos/{owner}/{repo}/issues";
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("DevBoard", "1.0"));
+                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                    var issue = new GitHubIssueDto
+                    {
+                        Title = ticket.Title,
+                        Body = $"{ticket.Description}\n\n**Type:** {ticket.Type}\n**Priority:** {ticket.Priority}\n**Created By:** {ticket.CreatedById}\n\n*Created via DevBoard*",
+                        Labels = new List<string> { "DevBoard", ticket.Type.ToString(), ticket.Priority.ToString() }
+                    };
+
+                    var json = JsonConvert.SerializeObject(issue);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                    var response = await httpClient.PostAsync(apiUrl, content);
+                    var responseBody = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new Exception($"GitHub API Error: {response.StatusCode} - {responseBody}");
+                    }
+
+                    // dynamic result = JsonConvert.DeserializeObject(responseBody);
+                    // return result.html_url;
+                    return "Issue created successfully"; 
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to create GitHub issue: {ex.Message}", ex);
+            }
+        }
     }
 }
