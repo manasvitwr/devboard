@@ -48,12 +48,19 @@ namespace DevBoard
             Database.SetInitializer<DevBoardContext>(null);
 
             string dbPath = HttpContext.Current.Server.MapPath("~/App_Data/DevBoard.db");
-            if (!System.IO.File.Exists(dbPath))
+            bool dbExists = System.IO.File.Exists(dbPath);
+
+            if (!dbExists)
             {
                 // Create database file
                 System.Data.SQLite.SQLiteConnection.CreateFile(dbPath);
             }
 
+            // check if schema exists even if file exists (safety check)
+            bool schemaExists = CheckSchemaExists(dbPath);
+
+            if (!dbExists || !schemaExists)
+            {
                 // Execute schema script - split by GO or ; to ensure all commands run
                 string schemaPath = HttpContext.Current.Server.MapPath("~/App_Data/schema.sql");
                 string schemaSql = System.IO.File.ReadAllText(schemaPath);
@@ -71,12 +78,33 @@ namespace DevBoard
                         }
                     }
                 }
+            }
 
             // Seed Application Data
             SeedApplicationData();
 
             // Initialize Membership database and seed data
             SeedMembershipData();
+        }
+
+        private static bool CheckSchemaExists(string dbPath)
+        {
+            try
+            {
+                using (var conn = new System.Data.SQLite.SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                {
+                    conn.Open();
+                    using (var cmd = new System.Data.SQLite.SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='Project';", conn))
+                    {
+                        var result = cmd.ExecuteScalar();
+                        return result != null && result.ToString() == "Project";
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static void SeedMembershipData()
