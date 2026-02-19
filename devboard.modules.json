@@ -2,28 +2,82 @@
     "Project": "DevBoard",
     "Modules": [
         {
-            "Name": "Board",
-            "Path": "DevBoard/Kanban.aspx"
+            "Name": "Project Management",
+            "Path": "DevBoard/Projects.aspx",
+            "Categories": [
+                "UI Design",
+                "Performance",
+                "Data Integrity",
+                "Search",
+                "Filters"
+            ]
         },
         {
-            "Name": "Authentication",
-            "Path": "DevBoard/Security"
+            "Name": "Kanban Board",
+            "Path": "DevBoard/Kanban.aspx",
+            "Categories": [
+                "Drag and Drop",
+                "Column Management",
+                "Ticket Cards",
+                "Filters",
+                "Real-time Updates"
+            ]
         },
         {
-            "Name": "DataLayer",
-            "Path": "DevBoard/Data"
+            "Name": "Module Voting Dashboard",
+            "Path": "DevBoard/ModuleVoting.aspx",
+            "Categories": [
+                "Health Engine",
+                "Glassmorphism UI",
+                "Voting Logic",
+                "Activity Feed",
+                "Responsive Design"
+            ]
         },
         {
-            "Name": "Services",
-            "Path": "DevBoard/Services"
+            "Name": "Issue Tracking",
+            "Path": "DevBoard/TicketHandler.ashx",
+            "Categories": [
+                "GitHub Integration",
+                "Formatting",
+                "Tags",
+                "Labels",
+                "Priorities",
+                "Attachments"
+            ]
         },
         {
-            "Name": "Models",
-            "Path": "DevBoard/Models"
+            "Name": "Authentication & Security",
+            "Path": "DevBoard/Security",
+            "Categories": [
+                "OAuth2",
+                "SQLite Providers",
+                "Role Management",
+                "Session Security",
+                "Encryption"
+            ]
         },
         {
-            "Name": "API",
-            "Path": "DevBoard/TicketHandler.ashx"
+            "Name": "Data Access Layer",
+            "Path": "DevBoard/Data",
+            "Categories": [
+                "SQLite Connectivity",
+                "Entity Framework",
+                "Schema Migrations",
+                "Seed Data",
+                "Performance"
+            ]
+        },
+        {
+            "Name": "Core Services",
+            "Path": "DevBoard/Services",
+            "Categories": [
+                "Sync Logic",
+                "Health Recalculation",
+                "GitHub API Client",
+                "Concurrency",
+                "Error Handling"
+            ]
         }
     ]
 }
