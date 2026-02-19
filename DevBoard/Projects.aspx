@@ -52,7 +52,10 @@
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <%# Eval("Name") %>
+                                    <a href='<%# "Kanban.aspx?projectId=" + Eval("Id") %>'
+                                        class="text-decoration-none text-dark">
+                                        <%# Eval("Name") %>
+                                    </a>
                                 </h5>
                                 <p class="card-text">
                                     <%# Eval("Description") %>
@@ -69,8 +72,11 @@
                                     </p>
                             </div>
                             <div class="card-footer">
-                                <a href='<%# "Modules.aspx?projectId=" + Eval("Id") %>' class="btn btn-sm btn-info">View
-                                    Modules</a>
+                                <a href='<%# "Kanban.aspx?projectId=" + Eval("Id") %>' class="btn btn-sm btn-primary">
+                                    <i class="bi bi-kanban"></i> View Board
+                                </a>
+                                <a href='<%# "Modules.aspx?projectId=" + Eval("Id") %>'
+                                    class="btn btn-sm btn-outline-info">Modules</a>
                                 <% if (User.IsInRole("Admin") || User.IsInRole("Dev")) { %>
                                     <asp:LinkButton ID="SyncButton" runat="server" CssClass="btn btn-sm btn-success"
                                         CommandName="Sync" CommandArgument='<%# Eval("Id") %>'

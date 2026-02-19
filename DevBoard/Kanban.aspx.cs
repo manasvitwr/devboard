@@ -21,6 +21,17 @@ namespace DevBoard
             if (!IsPostBack)
             {
                 LoadProjects();
+                
+                string projectIdQuery = Request.QueryString["projectId"];
+                if (!string.IsNullOrEmpty(projectIdQuery) && int.TryParse(projectIdQuery, out int projectId))
+                {
+                    var item = ProjectDropDown.Items.FindByValue(projectIdQuery);
+                    if (item != null)
+                    {
+                        ProjectDropDown.SelectedValue = projectIdQuery;
+                    }
+                }
+
                 if (ProjectDropDown.Items.Count > 0)
                 {
                     LoadTickets();
