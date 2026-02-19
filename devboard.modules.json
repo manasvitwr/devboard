@@ -1,0 +1,29 @@
+{
+    "Project": "DevBoard",
+    "Modules": [
+        {
+            "Name": "Board",
+            "Path": "DevBoard/Kanban.aspx"
+        },
+        {
+            "Name": "Authentication",
+            "Path": "DevBoard/Security"
+        },
+        {
+            "Name": "DataLayer",
+            "Path": "DevBoard/Data"
+        },
+        {
+            "Name": "Services",
+            "Path": "DevBoard/Services"
+        },
+        {
+            "Name": "Models",
+            "Path": "DevBoard/Models"
+        },
+        {
+            "Name": "API",
+            "Path": "DevBoard/TicketHandler.ashx"
+        }
+    ]
+}
