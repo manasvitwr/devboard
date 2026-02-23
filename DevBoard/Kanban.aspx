@@ -33,6 +33,19 @@
                 align-items: center;
                 gap: 5px;
             }
+
+            /* Filled state when user has voted — !important beats Bootstrap 5 CSS vars */
+            .vote-btn.vote-active-up {
+                background-color: #198754 !important;
+                color: #fff !important;
+                border-color: #198754 !important;
+            }
+
+            .vote-btn.vote-active-down {
+                background-color: #dc3545 !important;
+                color: #fff !important;
+                border-color: #dc3545 !important;
+            }
         </style>
     </asp:Content>
 
@@ -52,26 +65,30 @@
 
         <asp:UpdatePanel ID="KanbanUpdatePanel" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                
+
                 <!-- Ticket Modal -->
                 <div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="ticketModalLabel">Create/Edit Ticket</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <asp:HiddenField ID="TicketIdHidden" runat="server" />
                                 <div class="mb-3">
                                     <label class="form-label">Title</label>
-                                    <asp:TextBox ID="TitleTextBox" runat="server" CssClass="form-control" placeholder="Ticket Summary"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="TitleValidator" runat="server" ControlToValidate="TitleTextBox" 
-                                        ErrorMessage="Title is required" CssClass="text-danger small" ValidationGroup="TicketGroup" Display="Dynamic" />
+                                    <asp:TextBox ID="TitleTextBox" runat="server" CssClass="form-control"
+                                        placeholder="Ticket Summary"></asp:TextBox>
+                                    <asp:RequiredFieldValidator ID="TitleValidator" runat="server"
+                                        ControlToValidate="TitleTextBox" ErrorMessage="Title is required"
+                                        CssClass="text-danger small" ValidationGroup="TicketGroup" Display="Dynamic" />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Description</label>
-                                    <asp:TextBox ID="DescriptionTextBox" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"></asp:TextBox>
+                                    <asp:TextBox ID="DescriptionTextBox" runat="server" CssClass="form-control"
+                                        TextMode="MultiLine" Rows="4"></asp:TextBox>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -100,18 +117,20 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Assign To</label>
-                                        <asp:TextBox ID="AssignToTextBox" runat="server" CssClass="form-control" placeholder="Email (optional)"></asp:TextBox>
+                                        <asp:TextBox ID="AssignToTextBox" runat="server" CssClass="form-control"
+                                            placeholder="Email (optional)"></asp:TextBox>
                                     </div>
                                 </div>
                                 <div class="form-check mb-3">
                                     <asp:CheckBox ID="GitHubSyncCheckBox" runat="server" CssClass="form-check-input" />
-                                    <label class="form-check-label" for="<%= GitHubSyncCheckBox.ClientID %>">Create Issue on GitHub</label>
+                                    <label class="form-check-label" for="<%= GitHubSyncCheckBox.ClientID %>">Create
+                                        Issue on GitHub</label>
                                 </div>
                                 <div id="modalError" class="alert alert-danger d-none"></div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <asp:Button ID="SaveTicketButton" runat="server" Text="Save" CssClass="btn btn-primary" 
+                                <asp:Button ID="SaveTicketButton" runat="server" Text="Save" CssClass="btn btn-primary"
                                     OnClick="SaveTicketButton_Click" ValidationGroup="TicketGroup" />
                             </div>
                         </div>
@@ -124,12 +143,14 @@
                         <asp:Panel ID="TodoPanel" runat="server" CssClass="kanban-column" data-status="0">
                             <asp:Repeater ID="TodoRepeater" runat="server" OnItemCommand="TicketRepeater_ItemCommand">
                                 <ItemTemplate>
-                                    <div class="ticket-card" data-ticket-id="<%# Eval("Id") %>">
+                                    <div class="ticket-card" data-ticket-id='<%# Eval("Id") %>'>
                                         <div class="d-flex justify-content-between">
-                                            <h6><%# Eval("Title") %></h6>
-                                            <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket" CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </asp:LinkButton>
+                                            <h6>
+                                                <%# Eval("Title") %>
+                                            </h6>
+                                            <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket"
+                                                CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary"><i
+                                                    class="bi bi-pencil-square"></i></asp:LinkButton>
                                         </div>
                                         <p class="small mb-2">
                                             <%# Eval("Description") %>
@@ -137,22 +158,27 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
-                                                    class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>"><%# Eval("Type") %></span>
+                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>'>
+                                                    <%# Eval("Type") %>
+                                                </span>
                                                 <span
-                                                    class="badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>"><%# Eval("Priority") %></span>
+                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>'>
+                                                    <%# Eval("Priority") %>
+                                                </span>
                                             </div>
-                                            <div class="vote-section">
-                                                <button type="button" class="btn btn-sm btn-outline-success vote-btn"
-                                                    data-ticket-id="<%# Eval("Id") %>" data-value="1">
-                                                    <i class="bi bi-hand-thumbs-up"></i>
-                                                </button>
+                                            <div class="vote-section"
+                                                data-user-vote='<%# GetUserVote((int)Eval("Id")) %>'>
+                                                <button type="button"
+                                                    class='btn btn-sm <%# GetUserVote((int)Eval("Id")) == 1 ? "btn-success" : "btn-outline-success" %> vote-btn'
+                                                    data-ticket-id='<%# Eval("Id") %>' data-value="1"><i
+                                                        class="bi bi-hand-thumbs-up"></i></button>
                                                 <span class="badge bg-secondary">
                                                     <%# GetTicketScore((int)Eval("Id")) %>
                                                 </span>
-                                                <button type="button" class="btn btn-sm btn-outline-danger vote-btn"
-                                                    data-ticket-id="<%# Eval("Id") %>" data-value="-1">
-                                                    <i class="bi bi-hand-thumbs-down"></i>
-                                                </button>
+                                                <button type="button"
+                                                    class='btn btn-sm <%# GetUserVote((int)Eval("Id")) == -1 ? "btn-danger" : "btn-outline-danger" %> vote-btn'
+                                                    data-ticket-id='<%# Eval("Id") %>' data-value="-1"><i
+                                                        class="bi bi-hand-thumbs-down"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -164,14 +190,17 @@
                     <div class="col-md-4">
                         <h4 class="text-center mb-3">In Progress</h4>
                         <asp:Panel ID="InProgressPanel" runat="server" CssClass="kanban-column" data-status="1">
-                            <asp:Repeater ID="InProgressRepeater" runat="server" OnItemCommand="TicketRepeater_ItemCommand">
+                            <asp:Repeater ID="InProgressRepeater" runat="server"
+                                OnItemCommand="TicketRepeater_ItemCommand">
                                 <ItemTemplate>
-                                    <div class="ticket-card" data-ticket-id="<%# Eval("Id") %>">
+                                    <div class="ticket-card" data-ticket-id='<%# Eval("Id") %>'>
                                         <div class="d-flex justify-content-between">
-                                            <h6><%# Eval("Title") %></h6>
-                                            <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket" CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </asp:LinkButton>
+                                            <h6>
+                                                <%# Eval("Title") %>
+                                            </h6>
+                                            <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket"
+                                                CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary"><i
+                                                    class="bi bi-pencil-square"></i></asp:LinkButton>
                                         </div>
                                         <p class="small mb-2">
                                             <%# Eval("Description") %>
@@ -179,22 +208,27 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
-                                                    class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>"><%# Eval("Type") %></span>
+                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>'>
+                                                    <%# Eval("Type") %>
+                                                </span>
                                                 <span
-                                                    class="badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>"><%# Eval("Priority") %></span>
+                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>'>
+                                                    <%# Eval("Priority") %>
+                                                </span>
                                             </div>
-                                            <div class="vote-section">
-                                                <button type="button" class="btn btn-sm btn-outline-success vote-btn"
-                                                    data-ticket-id="<%# Eval("Id") %>" data-value="1">
-                                                    <i class="bi bi-hand-thumbs-up"></i>
-                                                </button>
+                                            <div class="vote-section"
+                                                data-user-vote='<%# GetUserVote((int)Eval("Id")) %>'>
+                                                <button type="button"
+                                                    class='btn btn-sm <%# GetUserVote((int)Eval("Id")) == 1 ? "btn-success" : "btn-outline-success" %> vote-btn'
+                                                    data-ticket-id='<%# Eval("Id") %>' data-value="1"><i
+                                                        class="bi bi-hand-thumbs-up"></i></button>
                                                 <span class="badge bg-secondary">
                                                     <%# GetTicketScore((int)Eval("Id")) %>
                                                 </span>
-                                                <button type="button" class="btn btn-sm btn-outline-danger vote-btn"
-                                                    data-ticket-id="<%# Eval("Id") %>" data-value="-1">
-                                                    <i class="bi bi-hand-thumbs-down"></i>
-                                                </button>
+                                                <button type="button"
+                                                    class='btn btn-sm <%# GetUserVote((int)Eval("Id")) == -1 ? "btn-danger" : "btn-outline-danger" %> vote-btn'
+                                                    data-ticket-id='<%# Eval("Id") %>' data-value="-1"><i
+                                                        class="bi bi-hand-thumbs-down"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -208,12 +242,14 @@
                         <asp:Panel ID="DonePanel" runat="server" CssClass="kanban-column" data-status="2">
                             <asp:Repeater ID="DoneRepeater" runat="server" OnItemCommand="TicketRepeater_ItemCommand">
                                 <ItemTemplate>
-                                    <div class="ticket-card" data-ticket-id="<%# Eval("Id") %>">
+                                    <div class="ticket-card" data-ticket-id='<%# Eval("Id") %>'>
                                         <div class="d-flex justify-content-between">
-                                            <h6><%# Eval("Title") %></h6>
-                                            <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket" CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </asp:LinkButton>
+                                            <h6>
+                                                <%# Eval("Title") %>
+                                            </h6>
+                                            <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket"
+                                                CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary"><i
+                                                    class="bi bi-pencil-square"></i></asp:LinkButton>
                                         </div>
                                         <p class="small mb-2">
                                             <%# Eval("Description") %>
@@ -221,22 +257,27 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
-                                                    class="badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>"><%# Eval("Type") %></span>
+                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>'>
+                                                    <%# Eval("Type") %>
+                                                </span>
                                                 <span
-                                                    class="badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>"><%# Eval("Priority") %></span>
+                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>'>
+                                                    <%# Eval("Priority") %>
+                                                </span>
                                             </div>
-                                            <div class="vote-section">
-                                                <button type="button" class="btn btn-sm btn-outline-success vote-btn"
-                                                    data-ticket-id="<%# Eval("Id") %>" data-value="1">
-                                                    <i class="bi bi-hand-thumbs-up"></i>
-                                                </button>
+                                            <div class="vote-section"
+                                                data-user-vote='<%# GetUserVote((int)Eval("Id")) %>'>
+                                                <button type="button"
+                                                    class='btn btn-sm <%# GetUserVote((int)Eval("Id")) == 1 ? "btn-success" : "btn-outline-success" %> vote-btn'
+                                                    data-ticket-id='<%# Eval("Id") %>' data-value="1"><i
+                                                        class="bi bi-hand-thumbs-up"></i></button>
                                                 <span class="badge bg-secondary">
                                                     <%# GetTicketScore((int)Eval("Id")) %>
                                                 </span>
-                                                <button type="button" class="btn btn-sm btn-outline-danger vote-btn"
-                                                    data-ticket-id="<%# Eval("Id") %>" data-value="-1">
-                                                    <i class="bi bi-hand-thumbs-down"></i>
-                                                </button>
+                                                <button type="button"
+                                                    class='btn btn-sm <%# GetUserVote((int)Eval("Id")) == -1 ? "btn-danger" : "btn-outline-danger" %> vote-btn'
+                                                    data-ticket-id='<%# Eval("Id") %>' data-value="-1"><i
+                                                        class="bi bi-hand-thumbs-down"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -245,9 +286,9 @@
                         </asp:Panel>
                     </div>
                 </div>
-                
+
                 <script type="text/javascript">
-                     function showCreateTicketModal() {
+                    function showCreateTicketModal() {
                         var modal = new bootstrap.Modal(document.getElementById('ticketModal'));
                         document.getElementById('<%= TicketIdHidden.ClientID %>').value = '';
                         document.getElementById('<%= TitleTextBox.ClientID %>').value = '';
