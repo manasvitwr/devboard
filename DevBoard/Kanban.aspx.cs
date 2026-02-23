@@ -2,6 +2,7 @@ using DevBoard.Models;
 using DevBoard.Services;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -21,7 +22,7 @@ namespace DevBoard
             if (!IsPostBack)
             {
                 LoadProjects();
-                
+
                 string projectIdQuery = Request.QueryString["projectId"];
                 if (!string.IsNullOrEmpty(projectIdQuery) && int.TryParse(projectIdQuery, out int projectId))
                 {
@@ -34,9 +35,14 @@ namespace DevBoard
 
                 if (ProjectDropDown.Items.Count > 0)
                 {
-                    LoadTickets();
                     LoadModules();
                 }
+            }
+
+            // Always reload tickets (covers both initial load and post-save full postback)
+            if (ProjectDropDown.Items.Count > 0)
+            {
+                LoadTickets();
             }
         }
 
@@ -105,7 +111,8 @@ namespace DevBoard
                     DescriptionTextBox.Text = ticket.Description;
                     TypeDropDown.SelectedValue = ((int)ticket.Type).ToString();
                     PriorityDropDown.SelectedValue = ((int)ticket.Priority).ToString();
-                    
+                    StatusDropDown.SelectedValue = ((int)ticket.Status).ToString();
+
                     if (ticket.ModuleId.HasValue && ModuleDropDown.Items.FindByValue(ticket.ModuleId.Value.ToString()) != null)
                         ModuleDropDown.SelectedValue = ticket.ModuleId.Value.ToString();
                     else
@@ -119,7 +126,7 @@ namespace DevBoard
             }
         }
 
-        protected async void SaveTicketButton_Click(object sender, EventArgs e)
+        protected void SaveTicketButton_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) return;
 
@@ -138,24 +145,25 @@ namespace DevBoard
                         Description = DescriptionTextBox.Text,
                         Type = (TicketType)int.Parse(TypeDropDown.SelectedValue),
                         Priority = (Priority)int.Parse(PriorityDropDown.SelectedValue),
+                        Status = (Status)int.Parse(StatusDropDown.SelectedValue),
                         ModuleId = moduleId,
                         CreatedById = User.Identity.Name ?? "Anonymous", // Fallback if not auth
-                        AssignedToId = AssignToTextBox.Text,
-                        Status = Status.Todo
+                        AssignedToId = AssignToTextBox.Text
                     };
 
                     _ticketService.CreateTicket(ticket);
 
                     if (GitHubSyncCheckBox.Checked)
                     {
-                        try 
+                        try
                         {
-                            await _projectService.CreateGitHubIssueAsync(projectId, ticket);
+                            // Run off the ASP.NET sync context to avoid InvalidOperationException
+                            Task.Run(() => _projectService.CreateGitHubIssueAsync(projectId, ticket)).GetAwaiter().GetResult();
                         }
                         catch (Exception ex)
                         {
-                            // Log error but don't fail ticket creation, maybe show alert
-                             ScriptManager.RegisterStartupScript(this, GetType(), "SyncError", $"alert('Ticket created but GitHub sync failed: {ex.Message.Replace("'", "\\'")}');", true);
+                            // Ticket already saved — just warn about GitHub sync
+                            ScriptManager.RegisterStartupScript(this, GetType(), "SyncError", $"alert('Ticket created but GitHub sync failed: {ex.Message.Replace("'", "\\'")}');", true);
                         }
                     }
                 }
@@ -170,13 +178,15 @@ namespace DevBoard
                         ticket.Description = DescriptionTextBox.Text;
                         ticket.Type = (TicketType)int.Parse(TypeDropDown.SelectedValue);
                         ticket.Priority = (Priority)int.Parse(PriorityDropDown.SelectedValue);
+                        ticket.Status = (Status)int.Parse(StatusDropDown.SelectedValue);
                         ticket.ModuleId = moduleId;
                         ticket.AssignedToId = AssignToTextBox.Text;
-                        
+
                         _ticketService.UpdateTicket(ticket);
                     }
                 }
 
+                // Board is re-rendered via the full postback response
                 LoadTickets();
             }
             catch (Exception ex)
