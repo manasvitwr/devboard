@@ -47,8 +47,9 @@ public class TicketHandler : IHttpHandler
                     ticketService.Vote(ticketId, userId, value);
 
                     int newScore = ticketService.GetTicketScore(ticketId);
+                    int userVote = ticketService.GetUserVote(ticketId, userId);
 
-                    context.Response.Write(JsonConvert.SerializeObject(new { success = true, score = newScore }));
+                    context.Response.Write(JsonConvert.SerializeObject(new { success = true, score = newScore, userVote = userVote }));
                 }
                 else
                 {
