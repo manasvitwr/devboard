@@ -212,5 +212,11 @@ namespace DevBoard
         {
             return _ticketService.GetTicketScore(ticketId);
         }
+
+        protected int GetUserVote(int ticketId)
+        {
+            if (!User.Identity.IsAuthenticated) return 0;
+            return _ticketService.GetUserVote(ticketId, User.Identity.Name);
+        }
     }
 }
