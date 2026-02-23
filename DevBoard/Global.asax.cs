@@ -48,36 +48,19 @@ namespace DevBoard
             Database.SetInitializer<DevBoardContext>(null);
 
             string dbPath = HttpContext.Current.Server.MapPath("~/App_Data/DevBoard.db");
-            bool dbExists = System.IO.File.Exists(dbPath);
 
-            if (!dbExists)
+            // Ensure the DB file is valid. If it exists but is corrupt (e.g. 0-byte stub
+            // left by a crashed CreateFile call), delete it so we rebuild cleanly.
+            if (System.IO.File.Exists(dbPath) && !IsValidSQLiteFile(dbPath))
             {
-                // Create database file
-                System.Data.SQLite.SQLiteConnection.CreateFile(dbPath);
+                System.IO.File.Delete(dbPath);
             }
 
-            // check if schema exists even if file exists (safety check)
-            bool schemaExists = CheckSchemaExists(dbPath);
+            bool schemaExists = System.IO.File.Exists(dbPath) && CheckSchemaExists(dbPath);
 
-            if (!dbExists || !schemaExists)
+            if (!schemaExists)
             {
-                // Execute schema script - split by GO or ; to ensure all commands run
-                string schemaPath = HttpContext.Current.Server.MapPath("~/App_Data/schema.sql");
-                string schemaSql = System.IO.File.ReadAllText(schemaPath);
-                var commands = schemaSql.Split(new[] { "GO", ";" }, StringSplitOptions.RemoveEmptyEntries);
-
-                using (var conn = new System.Data.SQLite.SQLiteConnection($"Data Source={dbPath};Version=3;"))
-                {
-                    conn.Open();
-                    foreach (var cmdText in commands)
-                    {
-                        if (string.IsNullOrWhiteSpace(cmdText)) continue;
-                        using (var cmd = new System.Data.SQLite.SQLiteCommand(cmdText, conn))
-                        {
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                }
+                ApplySchema(dbPath);
             }
 
             // Seed Application Data
@@ -85,6 +68,53 @@ namespace DevBoard
 
             // Initialize Membership database and seed data
             SeedMembershipData();
+        }
+
+        /// <summary>
+        /// Opens the file as a SQLite connection and runs a trivial query.
+        /// Returns false for 0-byte files, non-SQLite files, or any corrupt state.
+        /// </summary>
+        private static bool IsValidSQLiteFile(string dbPath)
+        {
+            try
+            {
+                // SQLite magic header check — first 16 bytes must start with "SQLite format 3\0"
+                byte[] header = new byte[16];
+                using (var fs = System.IO.File.OpenRead(dbPath))
+                {
+                    if (fs.Length < 100) return false; // minimum valid DB page is 100 bytes
+                    fs.Read(header, 0, 16);
+                }
+                string magic = System.Text.Encoding.ASCII.GetString(header);
+                return magic.StartsWith("SQLite format 3");
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void ApplySchema(string dbPath)
+        {
+            string schemaPath = HttpContext.Current.Server.MapPath("~/App_Data/schema.sql");
+            string schemaSql = System.IO.File.ReadAllText(schemaPath);
+            // Split on semicolons (SQLite doesn't use GO)
+            var commands = schemaSql.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Opening the connection against a non-existent path auto-creates a valid DB file.
+            using (var conn = new System.Data.SQLite.SQLiteConnection($"Data Source={dbPath};Version=3;"))
+            {
+                conn.Open();
+                foreach (var cmdText in commands)
+                {
+                    var trimmed = cmdText.Trim();
+                    if (string.IsNullOrWhiteSpace(trimmed)) continue;
+                    using (var cmd = new System.Data.SQLite.SQLiteCommand(trimmed, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
         }
 
         private static bool CheckSchemaExists(string dbPath)
