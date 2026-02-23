@@ -63,6 +63,8 @@ namespace DevBoard
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList StatusDropDown;
+
         protected global::System.Web.UI.WebControls.DropDownList TypeDropDown;
 
         /// <summary>
