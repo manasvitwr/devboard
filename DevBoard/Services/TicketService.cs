@@ -88,14 +88,19 @@ namespace DevBoard.Services
             var existingVote = _context.TicketVotes
                 .FirstOrDefault(v => v.TicketId == ticketId && v.UserId == userId);
 
-            if (existingVote != null)
+            if (existingVote != null && existingVote.Value == value)
             {
-                // Update existing vote
+                // Clicking the same vote again — toggle it off (un-vote)
+                _context.TicketVotes.Remove(existingVote);
+            }
+            else if (existingVote != null)
+            {
+                // Switching direction — update in place
                 existingVote.Value = value;
             }
             else
             {
-                // Create new vote
+                // Fresh vote
                 _context.TicketVotes.Add(new TicketVote
                 {
                     TicketId = ticketId,
@@ -112,6 +117,13 @@ namespace DevBoard.Services
             return _context.TicketVotes
                 .Where(v => v.TicketId == ticketId)
                 .Sum(v => (int?)v.Value) ?? 0;
+        }
+
+        public int GetUserVote(int ticketId, string userId)
+        {
+            var vote = _context.TicketVotes
+                .FirstOrDefault(v => v.TicketId == ticketId && v.UserId == userId);
+            return vote?.Value ?? 0;
         }
 
         public Dictionary<int, int> GetModulePainScores(int projectId)
