@@ -91,6 +91,18 @@
     <Content Include="Scripts\site.js" />
     <Content Include="TicketHandler.ashx" />
     <Content Include="Web.config" />
+    <Content Include="assets\logo.svg" />
+    <Content Include="assets\icons\login.svg" />
+    <Content Include="assets\icons\register.svg" />
+    <Content Include="assets\icons\graph-up.svg" />
+    <Content Include="assets\icons\kanban.svg" />
+    <Content Include="assets\icons\kanban-white.svg" />
+    <Content Include="assets\icons\plus-lg.svg" />
+    <Content Include="assets\icons\pencil-square.svg" />
+    <Content Include="assets\icons\github.svg" />
+    <Content Include="assets\icons\arrow-repeat.svg" />
+    <Content Include="assets\icons\hand-thumbs-up.svg" />
+    <Content Include="assets\icons\hand-thumbs-down.svg" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DevBoardContext.cs" />
