@@ -19,6 +19,8 @@ namespace DevBoard.Models
 
         public int? ModuleId { get; set; }
 
+        public int? CategoryId { get; set; }
+
         [Required]
         [StringLength(300)]
         public string Title { get; set; }
@@ -56,6 +58,7 @@ namespace DevBoard.Models
 
         public virtual Project Project { get; set; }
         public virtual Module Module { get; set; }
+        public virtual Category Category { get; set; }
         public virtual ICollection<TicketVote> Votes { get; set; }
     }
 }

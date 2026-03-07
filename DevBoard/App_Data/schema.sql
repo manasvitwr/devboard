@@ -35,9 +35,24 @@ CREATE TABLE IF NOT EXISTS [Project] (
 CREATE TABLE IF NOT EXISTS [Module] (
     [Id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     [ProjectId] INTEGER NOT NULL,
+    [ExtId] NVARCHAR(255),
     [Name] NVARCHAR(255) NOT NULL,
     [Path] NVARCHAR(512),
+    [Description] NVARCHAR(1024),
+    [IsCritical] BOOLEAN NOT NULL DEFAULT 0,
     CONSTRAINT [FK_Module_Project] FOREIGN KEY ([ProjectId]) REFERENCES [Project] ([Id]) ON DELETE CASCADE
+);
+
+-- Category Table
+CREATE TABLE IF NOT EXISTS [Category] (
+    [Id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    [ModuleId] INTEGER NOT NULL,
+    [ExtId] NVARCHAR(255),
+    [Name] NVARCHAR(255) NOT NULL,
+    [SeverityMultiplier] DECIMAL(18,2) NOT NULL DEFAULT 1.0,
+    [BaseScore] DECIMAL(18,2) NOT NULL DEFAULT 100.0,
+    [StressScore] DECIMAL(18,2) NOT NULL DEFAULT 0.0,
+    CONSTRAINT [FK_Category_Module] FOREIGN KEY ([ModuleId]) REFERENCES [Module] ([Id]) ON DELETE CASCADE
 );
 
 -- Tickets Table
@@ -59,8 +74,10 @@ CREATE TABLE IF NOT EXISTS [Ticket] (
     [ManualHeavy] BOOLEAN NOT NULL DEFAULT 0,
     [EstimatedTestEffort] INTEGER NOT NULL DEFAULT 0,
     [AffectedPaths] NVARCHAR(1024),
+    [CategoryId] INTEGER,
     CONSTRAINT [FK_Ticket_Project] FOREIGN KEY ([ProjectId]) REFERENCES [Project] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Ticket_Module] FOREIGN KEY ([ModuleId]) REFERENCES [Module] ([Id])
+    CONSTRAINT [FK_Ticket_Module] FOREIGN KEY ([ModuleId]) REFERENCES [Module] ([Id]),
+    CONSTRAINT [FK_Ticket_Category] FOREIGN KEY ([CategoryId]) REFERENCES [Category] ([Id])
 );
 
 -- TicketVotes Table
@@ -76,5 +93,7 @@ CREATE TABLE IF NOT EXISTS [TicketVote] (
 CREATE INDEX IF NOT EXISTS [IX_Module_ProjectId] ON [Module] ([ProjectId]);
 CREATE INDEX IF NOT EXISTS [IX_Ticket_ProjectId] ON [Ticket] ([ProjectId]);
 CREATE INDEX IF NOT EXISTS [IX_Ticket_ModuleId] ON [Ticket] ([ModuleId]);
+CREATE INDEX IF NOT EXISTS [IX_Ticket_CategoryId] ON [Ticket] ([CategoryId]);
+CREATE INDEX IF NOT EXISTS [IX_Category_ModuleId] ON [Category] ([ModuleId]);
 CREATE INDEX IF NOT EXISTS [IX_TicketVote_TicketId] ON [TicketVote] ([TicketId]);
 CREATE UNIQUE INDEX IF NOT EXISTS [IX_TicketVote_TicketId_UserId] ON [TicketVote] ([TicketId], [UserId]);

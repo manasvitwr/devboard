@@ -81,30 +81,80 @@ namespace DevBoard.Services
                     response.EnsureSuccessStatusCode();
 
                     var jsonContent = await response.Content.ReadAsStringAsync();
-                    var config = JsonConvert.DeserializeObject<DevBoardConfig>(jsonContent);
+                    
+                    List<ModuleDto> parsedModules = null;
+                    try 
+                    {
+                        // Try parsing as array first (new format)
+                        parsedModules = JsonConvert.DeserializeObject<List<ModuleDto>>(jsonContent);
+                    }
+                    catch
+                    {
+                        // Fallback to object format (old format)
+                        var config = JsonConvert.DeserializeObject<DevBoardConfig>(jsonContent);
+                        parsedModules = config?.Modules;
+                    }
 
-                    if (config?.Modules == null)
+                    if (parsedModules == null)
                         throw new InvalidOperationException("Invalid config format");
 
                     // Get existing modules for this project
-                    var existingModules = _context.Modules.Where(m => m.ProjectId == projectId).ToList();
+                    var existingModules = _context.Modules.Include(m => m.Categories).Where(m => m.ProjectId == projectId).ToList();
 
                     // Upsert modules
-                    foreach (var moduleDto in config.Modules)
+                    foreach (var moduleDto in parsedModules)
                     {
-                        var existingModule = existingModules.FirstOrDefault(m => m.Name == moduleDto.Name);
+                        var existingModule = existingModules.FirstOrDefault(m => (!string.IsNullOrEmpty(moduleDto.Id) && m.ExtId == moduleDto.Id) || m.Name == moduleDto.Name);
                         if (existingModule != null)
                         {
-                            existingModule.Path = moduleDto.Path;
+                            existingModule.Name = moduleDto.Name;
+                            existingModule.ExtId = moduleDto.Id;
+                            existingModule.Description = moduleDto.Description;
+                            existingModule.Path = moduleDto.Path ?? existingModule.Path;
+                            existingModule.IsCritical = moduleDto.IsCritical;
                         }
                         else
                         {
-                            _context.Modules.Add(new Module
+                            existingModule = new Module
                             {
                                 ProjectId = projectId,
+                                ExtId = moduleDto.Id,
                                 Name = moduleDto.Name,
-                                Path = moduleDto.Path
-                            });
+                                Description = moduleDto.Description,
+                                Path = moduleDto.Path,
+                                IsCritical = moduleDto.IsCritical
+                            };
+                            _context.Modules.Add(existingModule);
+                        }
+
+                        // Upsert Categories
+                        if (moduleDto.Categories != null)
+                        {
+                            foreach (var catDto in moduleDto.Categories)
+                            {
+                                var existingCat = existingModule.Categories?.FirstOrDefault(c => c.ExtId == catDto.Id || c.Name == catDto.Name);
+                                if (existingCat != null)
+                                {
+                                    existingCat.Name = catDto.Name;
+                                    existingCat.ExtId = catDto.Id;
+                                    existingCat.SeverityMultiplier = catDto.SeverityMultiplier;
+                                    existingCat.BaseScore = catDto.BaseScore;
+                                }
+                                else
+                                {
+                                    var newCat = new Category
+                                    {
+                                        ExtId = catDto.Id,
+                                        Name = catDto.Name,
+                                        SeverityMultiplier = catDto.SeverityMultiplier,
+                                        BaseScore = catDto.BaseScore,
+                                        StressScore = 0.0m,
+                                        Module = existingModule
+                                    };
+                                    if (existingModule.Categories == null) existingModule.Categories = new List<Category>();
+                                    existingModule.Categories.Add(newCat);
+                                }
+                            }
                         }
                     }
 
@@ -126,8 +176,30 @@ namespace DevBoard.Services
 
     public class ModuleDto
     {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("name")]
         public string Name { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
+        [JsonProperty("is_critical")]
+        public bool IsCritical { get; set; }
+        [JsonProperty("path")]
         public string Path { get; set; }
+        [JsonProperty("categories")]
+        public List<CategoryDto> Categories { get; set; }
+    }
+
+    public class CategoryDto
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+        [JsonProperty("severity_multiplier")]
+        public decimal SeverityMultiplier { get; set; }
+        [JsonProperty("base_score")]
+        public decimal BaseScore { get; set; }
     }
 
     public class GitHubIssueDto

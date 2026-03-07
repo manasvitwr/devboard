@@ -14,6 +14,7 @@ namespace DevBoard
 
         public DbSet<Project> Projects { get; set; }
         public DbSet<Module> Modules { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketVote> TicketVotes { get; set; }
 
@@ -42,6 +43,19 @@ namespace DevBoard
                 .HasMany(m => m.Tickets)
                 .WithOptional(t => t.Module)
                 .HasForeignKey(t => t.ModuleId)
+                .WillCascadeOnDelete(false);
+
+            // Category relationships
+            modelBuilder.Entity<Module>()
+                .HasMany(m => m.Categories)
+                .WithRequired(c => c.Module)
+                .HasForeignKey(c => c.ModuleId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Tickets)
+                .WithOptional(t => t.Category)
+                .HasForeignKey(t => t.CategoryId)
                 .WillCascadeOnDelete(false);
 
             // Ticket relationships
