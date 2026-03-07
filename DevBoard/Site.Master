@@ -25,8 +25,20 @@
 
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" href="Default.aspx">
-                    <i class="bi bi-kanban"></i> DevBoard
+                <a class="navbar-brand p-0 d-flex align-items-center gap-2" href="Default.aspx">
+                    <svg height="36" width="36" viewBox="-40 -40 1080 1080" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+                      <rect x="-36" y="-36" width="1072" height="1072" rx="38" ry="38" fill="white"/>
+                      <rect width="1000" height="1000" fill="#000000"/>
+                      <defs>
+                        <mask id="navTicketMask">
+                          <rect x="60" y="333.333" width="880" height="333.333" fill="white"/>
+                          <circle cx="60" cy="500" r="68" fill="black"/>
+                          <circle cx="940" cy="500" r="68" fill="black"/>
+                        </mask>
+                      </defs>
+                      <rect x="60" y="333.333" width="880" height="333.333" fill="#D9D9D9" mask="url(#navTicketMask)"/>
+                      <text x="500" y="500" text-anchor="middle" dominant-baseline="middle" font-family="Arial, Helvetica, sans-serif" font-size="300" font-weight="900" fill="#000000">404</text>
+                    </svg> DevBoard
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>

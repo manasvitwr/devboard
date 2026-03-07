@@ -7,7 +7,8 @@
 
     <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1><i class="bi bi-graph-up"></i> QA Dashboard</h1>
+            <h1><img src='<%=ResolveUrl("~/assets/icons/graph-up.svg")%>' alt="" width="28" height="28"
+                    style="vertical-align:-5px;margin-right:8px;"> QA Dashboard</h1>
             <div>
                 <label for="<%= ProjectDropDown.ClientID %>" class="me-2">Project:</label>
                 <asp:DropDownList ID="ProjectDropDown" runat="server" CssClass="form-select d-inline-block w-auto"

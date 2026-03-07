@@ -61,7 +61,7 @@
                                     <%# Eval("Description") %>
                                 </p>
                                 <%# !string.IsNullOrEmpty(Eval("RepoUrl") as string)
-                                    ? "<p class='card-text'><small class='text-muted'><i class='bi bi-github'></i> <a href='"
+                                    ? "<p class='card-text'><small class='text-muted'><img src='assets/icons/github.svg' alt='GitHub' width='14' height='14' style='vertical-align:-2px;margin-right:3px;'> <a href='"
                                     + Eval("RepoUrl") + "' target='_blank'>" + Eval("RepoUrl") + "</a></small></p>" : ""
                                     %>
                                     <p class="card-text">
@@ -73,7 +73,8 @@
                             </div>
                             <div class="card-footer">
                                 <a href='<%# "Kanban.aspx?projectId=" + Eval("Id") %>' class="btn btn-sm btn-primary">
-                                    <i class="bi bi-kanban"></i> View Board
+                                    <img src='<%=ResolveUrl("~/assets/icons/kanban-white.svg")%>' alt="" width="14"
+                                        height="14" style="vertical-align:-2px;margin-right:3px;"> View Board
                                 </a>
                                 <a href='<%# "Modules.aspx?projectId=" + Eval("Id") %>'
                                     class="btn btn-sm btn-outline-info">Modules</a>
@@ -81,7 +82,8 @@
                                     <asp:LinkButton ID="SyncButton" runat="server" CssClass="btn btn-sm btn-success"
                                         CommandName="Sync" CommandArgument='<%# Eval("Id") %>'
                                         Visible='<%# !string.IsNullOrEmpty(Eval("RepoUrl") as string) %>'>
-                                        <i class="bi bi-arrow-repeat"></i> Sync
+                                        <img src='<%=ResolveUrl("~/assets/icons/arrow-repeat.svg")%>' alt="" width="14"
+                                            height="14" style="vertical-align:-2px;margin-right:3px;"> Sync
                                     </asp:LinkButton>
                                     <asp:LinkButton ID="EditButton" runat="server" CssClass="btn btn-sm btn-warning"
                                         CommandName="Edit" CommandArgument='<%# Eval("Id") %>'>Edit</asp:LinkButton>

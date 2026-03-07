@@ -51,14 +51,16 @@
 
     <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1><i class="bi bi-kanban"></i> Kanban Board</h1>
+            <h1><img src='<%=ResolveUrl("~/assets/icons/kanban.svg")%>' alt="" width="28" height="28"
+                    style="vertical-align:-5px;margin-right:8px;"> Kanban Board</h1>
             <div>
                 <label for="<%= ProjectDropDown.ClientID %>" class="me-2">Project:</label>
                 <asp:DropDownList ID="ProjectDropDown" runat="server" CssClass="form-select d-inline-block w-auto"
                     AutoPostBack="true" OnSelectedIndexChanged="ProjectDropDown_SelectedIndexChanged">
                 </asp:DropDownList>
                 <button type="button" class="btn btn-primary ms-2" onclick="showCreateTicketModal()">
-                    <i class="bi bi-plus-lg"></i> New Ticket
+                    <img src='<%=ResolveUrl("~/assets/icons/plus-lg.svg")%>' alt="" width="16" height="16"
+                        style="vertical-align:-2px;margin-right:4px;"> New Ticket
                 </button>
             </div>
         </div>
@@ -169,8 +171,10 @@
                                                 <%# Eval("Title") %>
                                             </h6>
                                             <asp:LinkButton ID="EditBtn" runat="server" CommandName="EditTicket"
-                                                CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary"><i
-                                                    class="bi bi-pencil-square"></i></asp:LinkButton>
+                                                CommandArgument='<%# Eval("Id") %>' CssClass="text-secondary"><img
+                                                    src='<%=ResolveUrl("~/assets/icons/pencil-square.svg")%>' alt="Edit"
+                                                    width="16" height="16" style="vertical-align:-2px;">
+                                            </asp:LinkButton>
                                         </div>
                                         <p class="small mb-2">
                                             <%# Eval("Description") %>

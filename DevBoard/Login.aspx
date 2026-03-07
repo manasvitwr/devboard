@@ -6,7 +6,7 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">
-                        <i class="bi bi-box-arrow-in-right"></i> Login to DevBoard
+                        <img src='<%=ResolveUrl("~/assets/icons/login.svg")%>' alt="" width="24" height="24" style="vertical-align:-4px;margin-right:6px;"> Login to DevBoard
                     </h2>
                     
                     <asp:Login ID="LoginControl" runat="server" 

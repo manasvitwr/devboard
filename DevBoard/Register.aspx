@@ -7,7 +7,8 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <h2 class="card-title text-center mb-4">
-                            <i class="bi bi-person-plus"></i> Create Account
+                            <img src='<%=ResolveUrl("~/assets/icons/register.svg")%>' alt="" width="24" height="24"
+                                style="vertical-align:-4px;margin-right:6px;"> Create Account
                         </h2>
 
                         <div class="mb-3">
