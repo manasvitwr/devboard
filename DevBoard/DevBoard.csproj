@@ -107,6 +107,7 @@
   <ItemGroup>
     <Compile Include="Data\DevBoardContext.cs" />
     <Compile Include="Data\SQLiteConfiguration.cs" />
+    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Module.cs" />
     <Compile Include="Models\Project.cs" />
