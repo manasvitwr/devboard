@@ -1,83 +1,282 @@
-{
-    "Project": "DevBoard",
-    "Modules": [
-        {
-            "Name": "Project Management",
-            "Path": "DevBoard/Projects.aspx",
-            "Categories": [
-                "UI Design",
-                "Performance",
-                "Data Integrity",
-                "Search",
-                "Filters"
-            ]
-        },
-        {
-            "Name": "Kanban Board",
-            "Path": "DevBoard/Kanban.aspx",
-            "Categories": [
-                "Drag and Drop",
-                "Column Management",
-                "Ticket Cards",
-                "Filters",
-                "Real-time Updates"
-            ]
-        },
-        {
-            "Name": "Module Voting Dashboard",
-            "Path": "DevBoard/ModuleVoting.aspx",
-            "Categories": [
-                "Health Engine",
-                "Glassmorphism UI",
-                "Voting Logic",
-                "Activity Feed",
-                "Responsive Design"
-            ]
-        },
-        {
-            "Name": "Issue Tracking",
-            "Path": "DevBoard/TicketHandler.ashx",
-            "Categories": [
-                "GitHub Integration",
-                "Formatting",
-                "Tags",
-                "Labels",
-                "Priorities",
-                "Attachments"
-            ]
-        },
-        {
-            "Name": "Authentication & Security",
-            "Path": "DevBoard/Security",
-            "Categories": [
-                "OAuth2",
-                "SQLite Providers",
-                "Role Management",
-                "Session Security",
-                "Encryption"
-            ]
-        },
-        {
-            "Name": "Data Access Layer",
-            "Path": "DevBoard/Data",
-            "Categories": [
-                "SQLite Connectivity",
-                "Entity Framework",
-                "Schema Migrations",
-                "Seed Data",
-                "Performance"
-            ]
-        },
-        {
-            "Name": "Core Services",
-            "Path": "DevBoard/Services",
-            "Categories": [
-                "Sync Logic",
-                "Health Recalculation",
-                "GitHub API Client",
-                "Concurrency",
-                "Error Handling"
-            ]
-        }
-    ]
-}
+[
+    {
+        "id": "project-management",
+        "name": "Project Management",
+        "description": "Handles project creation, settings, and overall management",
+        "is_critical": false,
+        "categories": [
+            {
+                "id": "proj-ui-design",
+                "name": "UI Design",
+                "severity_multiplier": 0.8,
+                "base_score": 100
+            },
+            {
+                "id": "proj-performance",
+                "name": "Performance",
+                "severity_multiplier": 1.2,
+                "base_score": 100
+            },
+            {
+                "id": "proj-data-integrity",
+                "name": "Data Integrity",
+                "severity_multiplier": 1.8,
+                "base_score": 100
+            },
+            {
+                "id": "proj-search",
+                "name": "Search",
+                "severity_multiplier": 1.0,
+                "base_score": 100
+            },
+            {
+                "id": "proj-filters",
+                "name": "Filters",
+                "severity_multiplier": 0.9,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "kanban-board",
+        "name": "Kanban Board",
+        "description": "Core interface for task management, drag-and-drop, and workflow tracking",
+        "is_critical": true,
+        "categories": [
+            {
+                "id": "kanban-drag-drop",
+                "name": "Drag and Drop",
+                "severity_multiplier": 1.5,
+                "base_score": 100
+            },
+            {
+                "id": "kanban-column-mgmt",
+                "name": "Column Management",
+                "severity_multiplier": 1.2,
+                "base_score": 100
+            },
+            {
+                "id": "kanban-ticket-cards",
+                "name": "Ticket Cards",
+                "severity_multiplier": 1.0,
+                "base_score": 100
+            },
+            {
+                "id": "kanban-filters",
+                "name": "Filters",
+                "severity_multiplier": 0.9,
+                "base_score": 100
+            },
+            {
+                "id": "kanban-realtime",
+                "name": "Real-time Updates",
+                "severity_multiplier": 1.4,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "module-voting",
+        "name": "Module Voting Dashboard",
+        "description": "Platform for users to vote on module features and report bugs",
+        "is_critical": false,
+        "categories": [
+            {
+                "id": "vote-health-engine",
+                "name": "Health Engine",
+                "severity_multiplier": 1.6,
+                "base_score": 100
+            },
+            {
+                "id": "vote-glassmorphism",
+                "name": "Glassmorphism UI",
+                "severity_multiplier": 0.5,
+                "base_score": 100
+            },
+            {
+                "id": "vote-logic",
+                "name": "Voting Logic",
+                "severity_multiplier": 1.8,
+                "base_score": 100
+            },
+            {
+                "id": "vote-activity",
+                "name": "Activity Feed",
+                "severity_multiplier": 0.8,
+                "base_score": 100
+            },
+            {
+                "id": "vote-responsive",
+                "name": "Responsive Design",
+                "severity_multiplier": 0.7,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "issue-tracking",
+        "name": "Issue Tracking",
+        "description": "Integration with issue trackers like GitHub for seamless workflow",
+        "is_critical": true,
+        "categories": [
+            {
+                "id": "issue-github",
+                "name": "GitHub Integration",
+                "severity_multiplier": 1.9,
+                "base_score": 100
+            },
+            {
+                "id": "issue-formatting",
+                "name": "Formatting",
+                "severity_multiplier": 0.6,
+                "base_score": 100
+            },
+            {
+                "id": "issue-tags",
+                "name": "Tags",
+                "severity_multiplier": 0.8,
+                "base_score": 100
+            },
+            {
+                "id": "issue-labels",
+                "name": "Labels",
+                "severity_multiplier": 0.8,
+                "base_score": 100
+            },
+            {
+                "id": "issue-priorities",
+                "name": "Priorities",
+                "severity_multiplier": 1.3,
+                "base_score": 100
+            },
+            {
+                "id": "issue-attachments",
+                "name": "Attachments",
+                "severity_multiplier": 1.1,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "authentication",
+        "name": "Authentication",
+        "description": "Handles user login, OAuth, sessions, and security protocols",
+        "is_critical": true,
+        "categories": [
+            {
+                "id": "auth-oauth",
+                "name": "OAuth Failures",
+                "severity_multiplier": 1.8,
+                "base_score": 100
+            },
+            {
+                "id": "auth-session-lag",
+                "name": "Session Lag",
+                "severity_multiplier": 1.0,
+                "base_score": 100
+            },
+            {
+                "id": "auth-ui-polish",
+                "name": "UI Polish",
+                "severity_multiplier": 0.5,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "payments",
+        "name": "Payments",
+        "description": "Processing financial transactions, receipts, and invoices",
+        "is_critical": true,
+        "categories": [
+            {
+                "id": "pay-crashes",
+                "name": "Transaction Crashes",
+                "severity_multiplier": 2.0,
+                "base_score": 100
+            },
+            {
+                "id": "pay-receipt",
+                "name": "Receipt Formatting",
+                "severity_multiplier": 0.7,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "data-access",
+        "name": "Data Access Layer",
+        "description": "Manages database connectivity, Entity Framework context, and schema migrations",
+        "is_critical": true,
+        "categories": [
+            {
+                "id": "data-sqlite",
+                "name": "SQLite Connectivity",
+                "severity_multiplier": 2.0,
+                "base_score": 100
+            },
+            {
+                "id": "data-ef",
+                "name": "Entity Framework",
+                "severity_multiplier": 1.7,
+                "base_score": 100
+            },
+            {
+                "id": "data-schema",
+                "name": "Schema Migrations",
+                "severity_multiplier": 1.9,
+                "base_score": 100
+            },
+            {
+                "id": "data-seed",
+                "name": "Seed Data",
+                "severity_multiplier": 1.1,
+                "base_score": 100
+            },
+            {
+                "id": "data-perf",
+                "name": "Performance",
+                "severity_multiplier": 1.5,
+                "base_score": 100
+            }
+        ]
+    },
+    {
+        "id": "core-services",
+        "name": "Core Services",
+        "description": "Backend services logic, synchronization, and external API clients",
+        "is_critical": true,
+        "categories": [
+            {
+                "id": "core-sync",
+                "name": "Sync Logic",
+                "severity_multiplier": 1.6,
+                "base_score": 100
+            },
+            {
+                "id": "core-health",
+                "name": "Health Recalculation",
+                "severity_multiplier": 1.8,
+                "base_score": 100
+            },
+            {
+                "id": "core-github-api",
+                "name": "GitHub API Client",
+                "severity_multiplier": 1.4,
+                "base_score": 100
+            },
+            {
+                "id": "core-concurrency",
+                "name": "Concurrency",
+                "severity_multiplier": 1.7,
+                "base_score": 100
+            },
+            {
+                "id": "core-error",
+                "name": "Error Handling",
+                "severity_multiplier": 1.5,
+                "base_score": 100
+            }
+        ]
+    }
+]
