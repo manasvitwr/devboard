@@ -1,5 +1,5 @@
 <%@ Page Title="Kanban Board" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
-    CodeBehind="Kanban.aspx.cs" Inherits="DevBoard.Kanban" Async="true" %>
+    CodeBehind="Kanban.aspx.cs" Inherits="DevBoard.Kanban" Async="true" EnableEventValidation="false" %>
 
     <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
         <style>
@@ -126,26 +126,40 @@
                             <div class="col-md-4 mb-2">
                                 <label class="form-label mb-1">Module</label>
                                 <asp:DropDownList ID="ModuleDropDown" runat="server"
-                                    CssClass="form-select form-select-sm">
+                                    CssClass="form-select form-select-sm" onchange="onModuleChanged(this)">
                                 </asp:DropDownList>
                             </div>
                         </div>
-                        <div class="row align-items-center">
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label mb-1">Assign To</label>
-                                <asp:TextBox ID="AssignToTextBox" runat="server" CssClass="form-control form-control-sm"
-                                    placeholder="Email (optional)">
-                                </asp:TextBox>
-                            </div>
-                            <div class="col-md-6 mb-2 pt-3">
-                                <div class="form-check">
-                                    <asp:CheckBox ID="GitHubSyncCheckBox" runat="server" CssClass="form-check-input" />
-                                    <label class="form-check-label" for="<%= GitHubSyncCheckBox.ClientID %>">Create
-                                        Issue on GitHub</label>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label mb-1">Category</label>
+                                <asp:DropDownList ID="CategoryDropDown" runat="server"
+                                    CssClass="form-select form-select-sm" disabled="disabled"
+                                    onchange="syncCategoryHidden(this)">
+                                </asp:DropDownList>
+                                <small class="text-muted">Select a module first to unlock categories.</small>
                             </div>
                         </div>
-                        <div id="modalError" class="alert alert-danger d-none"></div>
+                        <%-- Hidden field that survives postback — mirrors CategoryDropDown.value --%>
+                            <asp:HiddenField ID="SelectedCategoryId" runat="server" />
+                            <asp:HiddenField ID="ModuleCategoriesJson" runat="server" />
+                            <div class="row align-items-center">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label mb-1">Assign To</label>
+                                    <asp:TextBox ID="AssignToTextBox" runat="server"
+                                        CssClass="form-control form-control-sm" placeholder="Email (optional)">
+                                    </asp:TextBox>
+                                </div>
+                                <div class="col-md-6 mb-2 pt-3">
+                                    <div class="form-check">
+                                        <asp:CheckBox ID="GitHubSyncCheckBox" runat="server"
+                                            CssClass="form-check-input" />
+                                        <label class="form-check-label" for="<%= GitHubSyncCheckBox.ClientID %>">Create
+                                            Issue on GitHub</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="modalError" class="alert alert-danger d-none"></div>
                     </div>
                     <div class="modal-footer py-2">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
@@ -315,6 +329,52 @@
         </asp:UpdatePanel>
 
         <script type="text/javascript">
+            // module → categories map, populated server-side
+            var _moduleCatMap = {};
+
+            function loadModuleCatMap() {
+                var raw = document.getElementById('<%= ModuleCategoriesJson.ClientID %>').value;
+                try { _moduleCatMap = raw ? JSON.parse(raw) : {}; } catch (e) { _moduleCatMap = {}; }
+            }
+
+            function syncCategoryHidden(catDd) {
+                document.getElementById('<%= SelectedCategoryId.ClientID %>').value = catDd.value;
+            }
+
+            function onModuleChanged(sel) {
+                var catDd = document.getElementById('<%= CategoryDropDown.ClientID %>');
+                var hiddenCat = document.getElementById('<%= SelectedCategoryId.ClientID %>');
+                catDd.innerHTML = '';
+                hiddenCat.value = '';
+                var mid = sel.value;
+                if (!mid) {
+                    catDd.disabled = true;
+                    var opt = document.createElement('option');
+                    opt.value = ''; opt.text = '-- Select Module First --';
+                    catDd.appendChild(opt);
+                    return;
+                }
+                var cats = _moduleCatMap[mid] || [];
+                if (cats.length === 0) {
+                    catDd.disabled = true;
+                    var opt = document.createElement('option');
+                    opt.value = ''; opt.text = '-- No categories --';
+                    catDd.appendChild(opt);
+                } else {
+                    catDd.disabled = false;
+                    var placeholder = document.createElement('option');
+                    placeholder.value = ''; placeholder.text = '-- Select Category --';
+                    catDd.appendChild(placeholder);
+                    cats.forEach(function (c) {
+                        var opt = document.createElement('option');
+                        opt.value = c.id; opt.text = c.name;
+                        catDd.appendChild(opt);
+                    });
+                    // sync hidden
+                    hiddenCat.value = catDd.value;
+                }
+            }
+
             function updateSaveBtn() {
                 var title = document.getElementById('<%= TitleTextBox.ClientID %>').value.trim();
                 var btn = document.getElementById('<%= SaveTicketButton.ClientID %>');
@@ -326,18 +386,30 @@
                 document.getElementById('<%= TitleTextBox.ClientID %>').value = '';
                 document.getElementById('<%= DescriptionTextBox.ClientID %>').value = '';
                 document.getElementById('<%= StatusDropDown.ClientID %>').value = '0';
+                document.getElementById('<%= ModuleDropDown.ClientID %>').value = '';
+                // reset category dd
+                onModuleChanged(document.getElementById('<%= ModuleDropDown.ClientID %>'));
                 document.getElementById('ticketModalLabel').innerText = 'Create Ticket';
                 updateSaveBtn();
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ticketModal')).show();
             }
 
-            function showEditTicketModal() {
+            function showEditTicketModal(moduleId, categoryId) {
                 document.getElementById('ticketModalLabel').innerText = 'Edit Ticket';
+                // populate categories for the pre-selected module
+                var modDd = document.getElementById('<%= ModuleDropDown.ClientID %>');
+                onModuleChanged(modDd);
+                // restore chosen category
+                if (categoryId) {
+                    var catDd = document.getElementById('<%= CategoryDropDown.ClientID %>');
+                    catDd.value = categoryId;
+                }
                 updateSaveBtn();
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ticketModal')).show();
             }
 
             document.addEventListener('DOMContentLoaded', function () {
+                loadModuleCatMap();
                 document.getElementById('<%= TitleTextBox.ClientID %>').addEventListener('input', updateSaveBtn);
             });
         </script>

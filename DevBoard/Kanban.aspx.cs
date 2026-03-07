@@ -1,8 +1,10 @@
 using DevBoard.Models;
 using DevBoard.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -65,12 +67,31 @@ namespace DevBoard
 
             using (var context = new DevBoardContext())
             {
-                var modules = context.Modules.Where(m => m.ProjectId == projectId).ToList();
-                ModuleDropDown.DataSource = modules;
-                ModuleDropDown.DataTextField = "Name";
-                ModuleDropDown.DataValueField = "Id";
-                ModuleDropDown.DataBind();
-                ModuleDropDown.Items.Insert(0, new ListItem("-- Select Module --", ""));
+                var modules = context.Modules
+                    .Where(m => m.ProjectId == projectId)
+                    .Select(m => new
+                    {
+                        m.Id,
+                        m.Name,
+                        Categories = m.Categories.Select(c => new { c.Id, c.Name })
+                    })
+                    .ToList();
+
+                ModuleDropDown.Items.Clear();
+                ModuleDropDown.Items.Add(new ListItem("-- Select Module --", ""));
+                foreach (var m in modules)
+                    ModuleDropDown.Items.Add(new ListItem(m.Name, m.Id.ToString()));
+
+                // Build JSON map for client-side category cascade
+                var catMap = new Dictionary<string, object>();
+                foreach (var m in modules)
+                {
+                    var cats = new List<object>();
+                    foreach (var c in m.Categories)
+                        cats.Add(new { id = c.Id, name = c.Name });
+                    catMap[m.Id.ToString()] = cats;
+                }
+                ModuleCategoriesJson.Value = new JavaScriptSerializer().Serialize(catMap);
             }
         }
 
@@ -119,9 +140,13 @@ namespace DevBoard
                         ModuleDropDown.SelectedIndex = 0;
 
                     AssignToTextBox.Text = ticket.AssignedToId;
-                    GitHubSyncCheckBox.Checked = false; // Reset sync checkbox on edit
-                    
-                    ScriptManager.RegisterStartupScript(this, GetType(), "ShowModal", "showEditTicketModal();", true);
+                    GitHubSyncCheckBox.Checked = false;
+
+                    // Pass moduleId and categoryId to JS so categories can be restored in edit modal
+                    string jsModuleId = ticket.ModuleId.HasValue ? ticket.ModuleId.Value.ToString() : "null";
+                    string jsCategoryId = ticket.CategoryId.HasValue ? ticket.CategoryId.Value.ToString() : "null";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "ShowModal",
+                        $"showEditTicketModal({jsModuleId}, {jsCategoryId});", true);
                 }
             }
         }
@@ -134,6 +159,12 @@ namespace DevBoard
             {
                 int projectId = int.Parse(ProjectDropDown.SelectedValue);
                 int? moduleId = string.IsNullOrEmpty(ModuleDropDown.SelectedValue) ? (int?)null : int.Parse(ModuleDropDown.SelectedValue);
+                // CategoryDropDown is JS-populated and loses its options on postback.
+                // SelectedCategoryId is a hidden field written by JS that survives the round-trip.
+                int? categoryId = null;
+                var rawCat = Request.Form[SelectedCategoryId.UniqueID];
+                if (!string.IsNullOrEmpty(rawCat) && int.TryParse(rawCat, out int parsedCat) && parsedCat > 0)
+                    categoryId = parsedCat;
                 
                 if (string.IsNullOrEmpty(TicketIdHidden.Value))
                 {
@@ -147,6 +178,7 @@ namespace DevBoard
                         Priority = (Priority)int.Parse(PriorityDropDown.SelectedValue),
                         Status = (Status)int.Parse(StatusDropDown.SelectedValue),
                         ModuleId = moduleId,
+                        CategoryId = categoryId,
                         CreatedById = User.Identity.Name ?? "Anonymous", // Fallback if not auth
                         AssignedToId = AssignToTextBox.Text
                     };
@@ -180,6 +212,7 @@ namespace DevBoard
                         ticket.Priority = (Priority)int.Parse(PriorityDropDown.SelectedValue);
                         ticket.Status = (Status)int.Parse(StatusDropDown.SelectedValue);
                         ticket.ModuleId = moduleId;
+                        ticket.CategoryId = categoryId;
                         ticket.AssignedToId = AssignToTextBox.Text;
 
                         _ticketService.UpdateTicket(ticket);
