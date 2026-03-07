@@ -89,6 +89,8 @@
     <Content Include="QADashboard.aspx" />
     <Content Include="Register.aspx" />
     <Content Include="Scripts\site.js" />
+    <Content Include="CategoryVoteHandler.ashx" />
+    <Content Include="ModuleVoting.aspx" />
     <Content Include="TicketHandler.ashx" />
     <Content Include="Web.config" />
     <Content Include="assets\logo.svg" />
@@ -108,13 +110,25 @@
     <Compile Include="Data\DevBoardContext.cs" />
     <Compile Include="Data\SQLiteConfiguration.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\CategoryVote.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Module.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TicketVote.cs" />
+    <Compile Include="Services\ModuleVotingService.cs" />
     <Compile Include="Services\ProjectService.cs" />
     <Compile Include="Services\TicketService.cs" />
+    <Compile Include="CategoryVoteHandler.ashx.cs">
+      <DependentUpon>CategoryVoteHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="ModuleVoting.aspx.cs">
+      <DependentUpon>ModuleVoting.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ModuleVoting.aspx.designer.cs">
+      <DependentUpon>ModuleVoting.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
