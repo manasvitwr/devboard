@@ -8,6 +8,7 @@ namespace DevBoard.Models
         public Category()
         {
             Tickets = new List<Ticket>();
+            Votes = new List<CategoryVote>();
         }
 
         public int Id { get; set; }
@@ -22,12 +23,13 @@ namespace DevBoard.Models
         public string Name { get; set; }
 
         public decimal SeverityMultiplier { get; set; }
-        
+
         public decimal BaseScore { get; set; }
-        
+
         public decimal StressScore { get; set; }
 
         public virtual Module Module { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<CategoryVote> Votes { get; set; }
     }
 }
