@@ -1,5 +1,6 @@
 using DevBoard.Services;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.UI;
 
@@ -22,9 +23,23 @@ namespace DevBoard
                         if (project != null)
                         {
                             ProjectNameLabel.Text = project.Name;
-                            var modules = context.Modules.Where(m => m.ProjectId == projectId).ToList();
-                            ModulesGridView.DataSource = modules;
-                            ModulesGridView.DataBind();
+
+                            // Eager-load Categories (+ their Tickets) and Tickets on each Module
+                            var modules = context.Modules
+                                .Where(m => m.ProjectId == projectId)
+                                .Include(m => m.Categories.Select(c => c.Tickets))
+                                .Include(m => m.Tickets)
+                                .ToList();
+
+                            if (modules.Count == 0)
+                            {
+                                EmptyPanel.Visible = true;
+                            }
+                            else
+                            {
+                                ModulesRepeater.DataSource = modules;
+                                ModulesRepeater.DataBind();
+                            }
                         }
                         else
                         {
