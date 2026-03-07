@@ -17,6 +17,7 @@ namespace DevBoard
         public DbSet<Category> Categories { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketVote> TicketVotes { get; set; }
+        public DbSet<CategoryVote> CategoryVotes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -57,6 +58,17 @@ namespace DevBoard
                 .WithOptional(t => t.Category)
                 .HasForeignKey(t => t.CategoryId)
                 .WillCascadeOnDelete(false);
+
+            // CategoryVote relationships
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Votes)
+                .WithRequired(v => v.Category)
+                .HasForeignKey(v => v.CategoryId)
+                .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<CategoryVote>()
+                .HasIndex(v => new { v.CategoryId, v.UserId })
+                .IsUnique();
 
             // Ticket relationships
             modelBuilder.Entity<Ticket>()

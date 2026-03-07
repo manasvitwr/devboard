@@ -89,6 +89,16 @@ CREATE TABLE IF NOT EXISTS [TicketVote] (
     CONSTRAINT [FK_TicketVote_Ticket] FOREIGN KEY ([TicketId]) REFERENCES [Ticket] ([Id]) ON DELETE CASCADE
 );
 
+-- CategoryVotes Table
+CREATE TABLE IF NOT EXISTS [CategoryVote] (
+    [Id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    [CategoryId] INTEGER NOT NULL,
+    [UserId] NVARCHAR(128) NOT NULL,
+    [Value] INTEGER NOT NULL,
+    [CreatedAt] DATETIME NOT NULL,
+    CONSTRAINT [FK_CategoryVote_Category] FOREIGN KEY ([CategoryId]) REFERENCES [Category] ([Id]) ON DELETE CASCADE
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS [IX_Module_ProjectId] ON [Module] ([ProjectId]);
 CREATE INDEX IF NOT EXISTS [IX_Ticket_ProjectId] ON [Ticket] ([ProjectId]);
@@ -97,3 +107,5 @@ CREATE INDEX IF NOT EXISTS [IX_Ticket_CategoryId] ON [Ticket] ([CategoryId]);
 CREATE INDEX IF NOT EXISTS [IX_Category_ModuleId] ON [Category] ([ModuleId]);
 CREATE INDEX IF NOT EXISTS [IX_TicketVote_TicketId] ON [TicketVote] ([TicketId]);
 CREATE UNIQUE INDEX IF NOT EXISTS [IX_TicketVote_TicketId_UserId] ON [TicketVote] ([TicketId], [UserId]);
+CREATE INDEX IF NOT EXISTS [IX_CategoryVote_CategoryId] ON [CategoryVote] ([CategoryId]);
+CREATE UNIQUE INDEX IF NOT EXISTS [IX_CategoryVote_CategoryId_UserId] ON [CategoryVote] ([CategoryId], [UserId]);
