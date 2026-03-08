@@ -410,7 +410,7 @@
 
                             <div class="module-header" onclick="toggleModule(this)">
                                 <div class='<%# "module-icon " + Eval("IconClass") %>'>
-                                    <img src='<%# (bool)Eval("IsCritical") ? ResolveUrl("~/assets/icons/exclamation-triangle-fill.svg") : ResolveUrl("~/assets/icons/check-circle-fill.svg") %>'
+                                    <img src='<%# Eval("IconClass").ToString() == "critical" ? ResolveUrl("~/assets/icons/exclamation-triangle-fill.svg") : ResolveUrl("~/assets/icons/check-circle-fill.svg") %>'
                                         alt="" width="18" height="18" />
                                 </div>
                                 <div class="module-name">
@@ -569,7 +569,7 @@
                 var downBtn = row.querySelector('.btn-outline-danger, .btn-danger');
                 var barEl = row.querySelector('.cat-bar');
 
-                fetch('CategoryVoteHandler.ashx', {
+                fetch(APP_ROOT + 'api/CategoryVoteHandler.ashx', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'categoryId=' + categoryId + '&value=' + value

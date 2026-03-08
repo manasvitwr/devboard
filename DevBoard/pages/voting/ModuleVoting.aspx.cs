@@ -133,7 +133,7 @@ namespace DevBoard.Pages
                             decimal ticketPenalty = ticketBoosts * 0.2m;
 
                             // Sc = weighted category votes + ticket boost penalty, clamped ≥ 0
-                            decimal scRaw = (decimal)weightedVotes + ticketPenalty;
+                            decimal scRaw = ((decimal)weightedVotes + ticketPenalty) * c.SeverityMultiplier;
                             decimal sc    = Math.Max(0m, scRaw);
 
                             int userVote = catVotes.FirstOrDefault(v => v.UserId == userId)?.Value ?? 0;
@@ -158,13 +158,9 @@ namespace DevBoard.Pages
                             });
                         }
 
-                        // Hm = 100 - avg(Sc) × 100, clamped to [0, 100]
-                        // Sc = (WeightedCategoryVotes + TicketBoostPenalty), so 1 unit of Sc = 100% stress.
-                        // avg(Sc) across categories drives the module health bar.
-                        double healthPct = 100.0;
-                        if (catVMs.Any())
-                            healthPct = Math.Min(100.0, Math.Max(0.0,
-                                100.0 - (double)catVMs.Average(c => c.StressScore) * 100.0));
+                        // Hm = 100 * (0.95)^(\sum Sc)
+                        decimal totalSc = catVMs.Any() ? catVMs.Sum(c => c.StressScore) : 0m;
+                        double healthPct = 100.0 * Math.Pow(0.95, (double)totalSc);
 
                         int healthPctInt = (int)Math.Round(healthPct);
                         string tab       = (healthPctInt >= 95) ? "low" : "top";
@@ -177,7 +173,7 @@ namespace DevBoard.Pages
                             HealthPct      = healthPctInt,
                             HealthClass    = HealthClass(healthPctInt),
                             HealthBarColor = HealthBarColor(healthPctInt),
-                            IconClass      = m.IsCritical ? "critical" : "normal",
+                            IconClass      = (m.IsCritical || healthPctInt < 70) ? "critical" : "normal",
                             TagHtml        = BuildTagHtml(m.IsCritical, healthPctInt),
                             Tab            = tab,
                             Categories     = catVMs
