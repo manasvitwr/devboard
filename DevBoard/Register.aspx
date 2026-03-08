@@ -3,7 +3,7 @@
 
     <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div style="max-width: 500px; width: 100%;">
                 <div class="card shadow">
                     <div class="card-body">
                         <h2 class="card-title text-center mb-4">

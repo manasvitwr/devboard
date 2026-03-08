@@ -1,0 +1,18 @@
+/* Inter Variable Font - Optimized for web */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('/assets/fonts/Inter-4.1/web/InterVariable.woff2') format('woff2-variations');
+    font-optical-sizing: auto;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('/assets/fonts/Inter-4.1/web/InterVariable-Italic.woff2') format('woff2-variations');
+    font-optical-sizing: auto;
+}

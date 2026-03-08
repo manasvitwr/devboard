@@ -1,6 +1,6 @@
 /* Site-wide styles */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+body, button, input, select, textarea, .btn, h1, h2, h3, h4, h5, h6, .form-label, .card-title, .modal-title {
+    font-family: 'Inter', sans-serif;
 }
 
 .footer {
