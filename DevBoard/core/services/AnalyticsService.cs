@@ -119,7 +119,7 @@ namespace DevBoard.Core.Services
                     int ticketBoosts = allTicketVotes.Count(tv => openTicketIds.Contains(tv.TicketId));
                     decimal ticketPenalty = ticketBoosts * 0.2m;
 
-                    decimal scRaw = (decimal)weightedVotes + ticketPenalty;
+                    decimal scRaw = ((decimal)weightedVotes + ticketPenalty) * c.SeverityMultiplier;
                     decimal sc = Math.Max(0m, scRaw);
                     totalSc += sc;
 

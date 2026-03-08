@@ -16,6 +16,8 @@ public class TicketHandler : IHttpHandler
         if (!context.Request.IsAuthenticated)
         {
             context.Response.StatusCode = 401;
+            context.Response.TrySkipIisCustomErrors = true;
+            context.Response.SuppressFormsAuthenticationRedirect = true;
             context.Response.Write(JsonConvert.SerializeObject(new { success = false, message = "Unauthorized" }));
             return;
         }
@@ -61,6 +63,7 @@ public class TicketHandler : IHttpHandler
         catch (Exception ex)
         {
             context.Response.StatusCode = 500;
+            context.Response.TrySkipIisCustomErrors = true;
             context.Response.Write(JsonConvert.SerializeObject(new { success = false, message = ex.Message }));
         }
     }

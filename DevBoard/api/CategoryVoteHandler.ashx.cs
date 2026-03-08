@@ -29,6 +29,8 @@ namespace DevBoard
             if (!context.Request.IsAuthenticated)
             {
                 context.Response.StatusCode = 401;
+                context.Response.TrySkipIisCustomErrors = true;
+                context.Response.SuppressFormsAuthenticationRedirect = true;
                 context.Response.Write("{\"error\":\"Unauthorized\"}");
                 return;
             }
@@ -101,7 +103,8 @@ namespace DevBoard
                     decimal ticketPenalty = ticketBoosts * 0.2m;
 
                     // Sc = weighted category votes + ticket boost penalty, clamped ≥ 0
-                    decimal sc = Math.Max(0m, (decimal)weightedNet + ticketPenalty);
+                    decimal scRaw = ((decimal)weightedNet + ticketPenalty) * category.SeverityMultiplier;
+                    decimal sc = Math.Max(0m, scRaw);
 
                     int upvotes   = category.Votes.Count(v => v.Value == 1);
                     int downvotes = category.Votes.Count(v => v.Value == -1);
@@ -124,6 +127,7 @@ namespace DevBoard
             catch (Exception ex)
             {
                 context.Response.StatusCode = 500;
+                context.Response.TrySkipIisCustomErrors = true;
                 context.Response.Write("{\"error\":\"" + ex.Message.Replace("\"", "'") + "\"}");
             }
         }

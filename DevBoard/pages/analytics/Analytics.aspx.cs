@@ -2,8 +2,6 @@ using DevBoard.Core.Models;
 using DevBoard.Core.Services;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -12,12 +10,8 @@ namespace DevBoard.Pages
 {
     public partial class Analytics : Page
     {
-        private TicketService _ticketService;
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            _ticketService = new TicketService(new DevBoardContext());
-
             if (!IsPostBack)
             {
                 LoadProjects();
@@ -32,7 +26,7 @@ namespace DevBoard.Pages
         {
             using (var context = new DevBoardContext())
             {
-                var projects = context.Projects.ToList();
+                var projects = context.Projects.OrderBy(p => p.Name).ToList();
                 ProjectDropDown.DataSource = projects;
                 ProjectDropDown.DataTextField = "Name";
                 ProjectDropDown.DataValueField = "Id";
@@ -46,78 +40,40 @@ namespace DevBoard.Pages
                 return;
 
             int projectId = int.Parse(ProjectDropDown.SelectedValue);
-            var tickets = _ticketService.GetTicketsByProject(projectId);
 
-            // Summary stats
-            TotalTicketsLabel.Text = tickets.Count.ToString();
-            QADebtLabel.Text = tickets.Count(t => t.Type == TicketType.QADebt || t.Type == TicketType.Bug).ToString();
-            FlakyLabel.Text = tickets.Count(t => t.Flaky).ToString();
-            MissingTestsLabel.Text = tickets.Count(t => t.MissingTests).ToString();
-
-            // Chart data
-            var chartData = new
+            using (var ctx = new DevBoardContext())
             {
-                typeLabels = new[] { "Feature", "Bug", "QA Debt", "Chore" },
-                types = new[]
+                var service = new AnalyticsService(ctx);
+                var dto = service.GetDashboardData(projectId);
+
+                ProjectHealthLabel.Text = dto.ProjectHealthPct.ToString() + "%";
+                ProjectHealthStatusLabel.Text = dto.ProjectHealthStatus;
+                ProjectHealthLabel.CssClass = dto.ProjectHealthCssClass;
+
+                if (dto.TopUnstableModules.Any())
                 {
-                    tickets.Count(t => t.Type == TicketType.Feature),
-                    tickets.Count(t => t.Type == TicketType.Bug),
-                    tickets.Count(t => t.Type == TicketType.QADebt),
-                    tickets.Count(t => t.Type == TicketType.Chore)
-                },
-                statusLabels = new[] { "To Do", "In Progress", "Done" },
-                statuses = new[]
-                {
-                    tickets.Count(t => t.Status == Status.Todo),
-                    tickets.Count(t => t.Status == Status.InProgress),
-                    tickets.Count(t => t.Status == Status.Done)
+                    StressMapRepeater.DataSource = dto.TopUnstableModules;
+                    StressMapRepeater.DataBind();
+                    StressMapRepeater.Visible = true;
+                    EmptyStressMapPanel.Visible = false;
                 }
-            };
-
-            ChartDataHidden.Value = JsonConvert.SerializeObject(chartData);
-
-            // Pain scores
-            LoadPainScores(projectId);
-        }
-
-        private void LoadPainScores(int projectId)
-        {
-            using (var context = new DevBoardContext())
-            {
-                var modules = context.Modules
-                    .Where(m => m.ProjectId == projectId)
-                    .Include(m => m.Tickets)
-                    .Include(m => m.Tickets.Select(t => t.Votes))
-                    .ToList();
-
-                var painScoreData = modules.Select(module =>
+                else
                 {
-                    var openQADebtCount = module.Tickets.Count(t =>
-                        (t.Type == TicketType.QADebt || t.Type == TicketType.Bug) &&
-                        t.Status != Status.Done);
+                    StressMapRepeater.Visible = false;
+                    EmptyStressMapPanel.Visible = true;
+                }
 
-                    var flakyCount = module.Tickets.Count(t => t.Flaky);
+                var chartData = new
+                {
+                    categories = dto.CategoryLabels,
+                    todoTickets = dto.TodoTickets,
+                    inProgressTickets = dto.InProgressTickets,
+                    doneTickets = dto.DoneTickets,
+                    totalUpvotes = dto.TotalUpvotes,
+                    totalDownvotes = dto.TotalDownvotes
+                };
 
-                    var upvotesOnQADebt = module.Tickets
-                        .Where(t => t.Type == TicketType.QADebt || t.Type == TicketType.Bug)
-                        .SelectMany(t => t.Votes)
-                        .Where(v => v.Value > 0)
-                        .Sum(v => v.Value);
-
-                    var painScore = (openQADebtCount * 2) + upvotesOnQADebt + (flakyCount * 3);
-
-                    return new
-                    {
-                        ModuleName = module.Name,
-                        OpenQADebt = openQADebtCount,
-                        FlakyCount = flakyCount,
-                        Upvotes = upvotesOnQADebt,
-                        PainScore = painScore
-                    };
-                }).OrderByDescending(m => m.PainScore).ToList();
-
-                PainScoreGridView.DataSource = painScoreData;
-                PainScoreGridView.DataBind();
+                ChartDataHidden.Value = JsonConvert.SerializeObject(chartData);
             }
         }
 
@@ -126,30 +82,25 @@ namespace DevBoard.Pages
             LoadDashboard();
         }
 
-        protected void PainScoreGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void StressMapRepeater_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                var painScore = int.Parse(e.Row.Cells[4].Text);
+                var dto = e.Item.DataItem as StressMapDto;
+                var childRepeater = e.Item.FindControl("FailingCategoriesRepeater") as Repeater;
+                var noFailing = e.Item.FindControl("NoFailingLabel") as Label;
 
-                // Heat coloring based on pain score
-                if (painScore >= 15)
+                if (dto.FailingCategories != null && dto.FailingCategories.Any())
                 {
-                    e.Row.Cells[4].BackColor = System.Drawing.Color.FromArgb(220, 53, 69); // Red
-                    e.Row.Cells[4].ForeColor = System.Drawing.Color.White;
-                }
-                else if (painScore >= 8)
-                {
-                    e.Row.Cells[4].BackColor = System.Drawing.Color.FromArgb(255, 193, 7); // Yellow
-                }
-                else if (painScore >= 3)
-                {
-                    e.Row.Cells[4].BackColor = System.Drawing.Color.FromArgb(13, 202, 240); // Cyan
+                    childRepeater.DataSource = dto.FailingCategories;
+                    childRepeater.DataBind();
+                    childRepeater.Visible = true;
+                    if (noFailing != null) noFailing.Visible = false;
                 }
                 else
                 {
-                    e.Row.Cells[4].BackColor = System.Drawing.Color.FromArgb(25, 135, 84); // Green
-                    e.Row.Cells[4].ForeColor = System.Drawing.Color.White;
+                    childRepeater.Visible = false;
+                    if (noFailing != null) noFailing.Visible = true;
                 }
             }
         }
