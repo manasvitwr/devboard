@@ -106,11 +106,11 @@
                         </div>
                         <div class="module-meta">
                             <span class="badge bg-secondary" title="Tickets">
-                                <%# ((System.Collections.Generic.ICollection<DevBoard.Models.Ticket>
+                                <%# ((System.Collections.Generic.ICollection<DevBoard.Core.Models.Ticket>
                                     )Eval("Tickets")).Count %> tickets
                             </span>
                             <span class="badge bg-info text-dark" title="Categories">
-                                <%# ((System.Collections.Generic.ICollection<DevBoard.Models.Category>
+                                <%# ((System.Collections.Generic.ICollection<DevBoard.Core.Models.Category>
                                     )Eval("Categories")).Count %> categories
                             </span>
                             <svg class="module-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -132,7 +132,7 @@
                                             <%# string.Format("{0:0.##}", Eval("SeverityMultiplier")) %>x severity
                                         </span>
                                         <span class="badge bg-light text-dark border" title="Tickets">
-                                            <%# ((System.Collections.Generic.ICollection<DevBoard.Models.Ticket>
+                                            <%# ((System.Collections.Generic.ICollection<DevBoard.Core.Models.Ticket>
                                                 )Eval("Tickets")).Count %> tickets
                                         </span>
                                     </div>
@@ -140,7 +140,7 @@
                             </ItemTemplate>
                         </asp:Repeater>
                         <asp:Label ID="NoCategoriesLabel" runat="server"
-                            Visible='<%# ((System.Collections.Generic.ICollection<DevBoard.Models.Category>)Eval("Categories")).Count == 0 %>'
+                            Visible='<%# ((System.Collections.Generic.ICollection<DevBoard.Core.Models.Category>)Eval("Categories")).Count == 0 %>'
                             CssClass="no-categories" Text="No categories defined for this module." />
                     </div>
                 </div>

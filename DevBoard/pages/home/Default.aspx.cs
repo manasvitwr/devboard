@@ -8,17 +8,17 @@ namespace DevBoard.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
             // Role-based redirect
-            if (User.IsInRole("Dev"))
+            if (User.IsInRole("Dev") || User.IsInRole("QA"))
             {
-                Response.Redirect("~/Kanban.aspx");
+                Response.Redirect("~/pages/kanban/Kanban.aspx");
             }
-            else if (User.IsInRole("QA") || User.IsInRole("Stakeholder"))
+            else if (User.IsInRole("Stakeholder"))
             {
-                Response.Redirect("~/QADashboard.aspx");
+                Response.Redirect("~/pages/analytics/Analytics.aspx");
             }
-            else if (User.IsInRole("Admin"))
+            else
             {
-                Response.Redirect("~/Projects.aspx");
+                Response.Redirect("~/pages/projects/Projects.aspx");
             }
             // If no specific role, stay on this page
         }

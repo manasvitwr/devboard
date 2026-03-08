@@ -12,7 +12,7 @@
                         </h2>
 
                         <asp:Login ID="LoginControl" runat="server" OnAuthenticate="LoginControl_Authenticate"
-                            DestinationPageUrl="~/Default.aspx" FailureText="Invalid username or password."
+                            DestinationPageUrl="~/pages/home/Default.aspx" FailureText="Invalid username or password."
                             UserNameLabelText="Email:" PasswordLabelText="Password:" RememberMeText="Remember me"
                             LoginButtonText="Login" CssClass="login-form">
                             <LayoutTemplate>

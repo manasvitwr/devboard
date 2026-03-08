@@ -13,7 +13,7 @@ namespace DevBoard
         protected void LogoutButton_Click(object sender, EventArgs e)
         {
             FormsAuthentication.SignOut();
-            Response.Redirect("~/Login.aspx");
+            Response.Redirect("~/pages/auth/Login.aspx");
         }
     }
 }

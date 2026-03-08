@@ -11,7 +11,7 @@ namespace DevBoard.Pages.Pages.Auth
         {
             if (Request.IsAuthenticated)
             {
-                Response.Redirect("~/Default.aspx");
+                Response.Redirect("~/pages/home/Default.aspx");
             }
         }
 

@@ -5,7 +5,7 @@ using DevBoard.Core.Data;
 
 namespace DevBoard
 {
-    [DbConfigurationType(typeof(DevBoard.Data.SQLiteConfiguration))]
+    [DbConfigurationType(typeof(DevBoard.Core.Data.SQLiteConfiguration))]
     public class DevBoardContext : DbContext
     {
         public DevBoardContext() : base("name=DevBoardContext")

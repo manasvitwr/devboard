@@ -11,7 +11,7 @@ namespace DevBoard.Pages.Pages.Auth
         {
             if (Request.IsAuthenticated)
             {
-                Response.Redirect("~/Default.aspx");
+                Response.Redirect("~/pages/home/Default.aspx");
             }
         }
 
@@ -40,7 +40,7 @@ namespace DevBoard.Pages.Pages.Auth
 
                     // Sign in and redirect
                     FormsAuthentication.SetAuthCookie(EmailTextBox.Text, false);
-                    Response.Redirect("~/Default.aspx");
+                    Response.Redirect("~/pages/home/Default.aspx");
                 }
             }
             catch (MembershipCreateUserException ex)

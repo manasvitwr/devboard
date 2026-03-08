@@ -534,7 +534,7 @@
                     <div class="modal-body">
                         <p class="text-muted small mb-3">Use the Kanban Board to create issues with full module +
                             category assignment.</p>
-                        <a href="Kanban.aspx" class="btn btn-primary w-100">Go to Kanban Board</a>
+                        <a href="../kanban/Kanban.aspx" class="btn btn-primary w-100">Go to Kanban Board</a>
                     </div>
                 </div>
             </div>

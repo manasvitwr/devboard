@@ -52,7 +52,7 @@
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <a href='<%# "Kanban.aspx?projectId=" + Eval("Id") %>'
+                                    <a href='<%# ResolveUrl("~/pages/kanban/Kanban.aspx?projectId=" + Eval("Id")) %>'
                                         class="text-decoration-none text-dark">
                                         <%# Eval("Name") %>
                                     </a>
@@ -66,13 +66,13 @@
                                     %>
                                     <p class="card-text">
                                         <span class="badge bg-secondary">
-                                            <%# ((System.Collections.Generic.ICollection<DevBoard.Models.Module>
+                                            <%# ((System.Collections.Generic.ICollection<DevBoard.Core.Models.Module>
                                                 )Eval("Modules")).Count %> Modules
                                         </span>
                                     </p>
                             </div>
                             <div class="card-footer d-flex flex-nowrap align-items-center gap-2 overflow-auto">
-                                <a href='<%# "Kanban.aspx?projectId=" + Eval("Id") %>'
+                                <a href='<%# ResolveUrl("~/pages/kanban/Kanban.aspx?projectId=" + Eval("Id")) %>'
                                     class="btn btn-sm btn-primary text-nowrap">
                                     <img src='<%=ResolveUrl("~/assets/icons/kanban-white.svg")%>' alt="" width="14"
                                         height="14" style="vertical-align:-2px;margin-right:3px;"> View Board

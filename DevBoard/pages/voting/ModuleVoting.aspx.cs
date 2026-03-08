@@ -22,7 +22,7 @@ namespace DevBoard.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Request.IsAuthenticated) { Response.Redirect("~/Login.aspx"); return; }
+            if (!Request.IsAuthenticated) { Response.Redirect("~/pages/auth/Login.aspx"); return; }
             if (!IsPostBack) { LoadProjects(); LoadData(); }
         }
 

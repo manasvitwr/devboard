@@ -3,137 +3,399 @@
 
     <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <style>
+            /* Typography and Layout styles matching Module Voting */
+            .analytics-layout {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .mv-page-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            .mv-page-title {
+                font-size: 1.6rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            /* Standardized Cards */
+            .analytics-card {
+                background: #fff;
+                border: 1px solid #e0e0e0;
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, .04);
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .analytics-card-title {
+                font-size: 1.05rem;
+                font-weight: 700;
+                margin-bottom: 16px;
+                color: #343a40;
+                border-bottom: 1px solid #f1f5f9;
+                padding-bottom: 12px;
+            }
+
+            /* Health Gauge */
+            .health-gauge-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 0;
+            }
+
+            .health-gauge-value {
+                font-size: 4rem;
+                font-weight: 800;
+                line-height: 1;
+            }
+
+            .health-gauge-label {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #6c757d;
+                margin-top: 8px;
+            }
+
+            /* Health Colors */
+            .health-green {
+                color: #15803d;
+            }
+
+            .health-yellow {
+                color: #a16207;
+            }
+
+            .health-red {
+                color: #dc2626;
+            }
+
+            /* Stress Map List */
+            .stress-map-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .stress-item {
+                background: #fafafa;
+                border: 1px solid #f1f5f9;
+                border-radius: 8px;
+                padding: 16px;
+            }
+
+            .stress-item-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .stress-item-title {
+                font-size: 1rem;
+                font-weight: 700;
+                color: #1e293b;
+            }
+
+            .stress-item-health {
+                font-weight: 700;
+                font-size: 0.95rem;
+                padding: 4px 10px;
+                border-radius: 8px;
+            }
+
+            .bg-health-green {
+                background: #dcfce7;
+                color: #15803d;
+            }
+
+            .bg-health-yellow {
+                background: #fef9c3;
+                color: #a16207;
+            }
+
+            .bg-health-red {
+                background: #fee2e2;
+                color: #dc2626;
+            }
+
+            .failing-categories {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .failing-category-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.85rem;
+                background: #fff;
+                padding: 8px 12px;
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
+                border-left: 4px solid #f59e0b;
+            }
+
+            .failing-category-row.critical-risk {
+                border-left-color: #dc2626;
+            }
+
+            .cat-name-box {
+                font-weight: 600;
+                color: #475569;
+            }
+
+            .cat-signals-box {
+                font-weight: 700;
+                color: #dc2626;
+            }
+
+            .charts-row {
+                display: flex;
+                gap: 24px;
+            }
+
+            @media (max-width:900px) {
+                .charts-row {
+                    flex-direction: column;
+                }
+
+                .chart-col {
+                    width: 100%;
+                }
+            }
+
+            .chart-col {
+                flex: 1;
+                min-width: 0;
+            }
+        </style>
     </asp:Content>
 
     <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 style="font-size: 1.6rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 12px;">
+        <div class="mv-page-header">
+            <div class="mv-page-title">
                 Analytics
                 <asp:DropDownList ID="ProjectDropDown" runat="server" CssClass="form-select form-select-sm"
                     style="width:auto;font-size:.8rem;font-weight:600;" AutoPostBack="true"
                     OnSelectedIndexChanged="ProjectDropDown_SelectedIndexChanged">
                 </asp:DropDownList>
-            </h1>
-            <div>
-                <!-- actions can go here if needed -->
             </div>
         </div>
 
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Tickets</h5>
-                        <h2 class="text-primary">
-                            <asp:Label ID="TotalTicketsLabel" runat="server" Text="0"></asp:Label>
-                        </h2>
+        <div class="analytics-layout">
+            <!-- Top Row: Overview & Stress Map -->
+            <div class="row align-items-stretch" style="row-gap: 24px;">
+                <div class="col-md-5 d-flex">
+                    <div class="analytics-card w-100">
+                        <div class="analytics-card-title">Project Health</div>
+                        <div class="health-gauge-container flex-grow-1">
+                            <asp:Label ID="ProjectHealthLabel" runat="server" CssClass="health-gauge-value" Text="100%">
+                            </asp:Label>
+                            <div class="health-gauge-label">
+                                <asp:Label ID="ProjectHealthStatusLabel" runat="server" Text="Neutral / Stable">
+                                </asp:Label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7 d-flex">
+                    <div class="analytics-card w-100">
+                        <div class="analytics-card-title">Stress Map (Top Unstable Modules)</div>
+                        <div class="stress-map-list">
+                            <asp:Repeater ID="StressMapRepeater" runat="server"
+                                OnItemDataBound="StressMapRepeater_ItemDataBound">
+                                <ItemTemplate>
+                                    <div class="stress-item">
+                                        <div class="stress-item-header">
+                                            <div class="stress-item-title">
+                                                <%# Eval("ModuleName") %>
+                                            </div>
+                                            <div class='<%# "stress-item-health " + Eval("HealthBgClass") %>'>
+                                                <%# Eval("HealthPct") %>%
+                                            </div>
+                                        </div>
+                                        <div class="failing-categories">
+                                            <asp:Repeater ID="FailingCategoriesRepeater" runat="server">
+                                                <ItemTemplate>
+                                                    <div
+                                                        class='<%# "failing-category-row " + ((bool)Eval("IsCriticalRisk") ? "critical-risk" : "") %>'>
+                                                        <div class="cat-name-box">
+                                                            <%# Eval("CategoryName") %>
+                                                        </div>
+                                                        <div class="cat-signals-box">
+                                                            <%# Eval("Downvotes") %> Instability Signals
+                                                        </div>
+                                                    </div>
+                                                </ItemTemplate>
+                                            </asp:Repeater>
+                                            <asp:Label ID="NoFailingLabel" runat="server" Visible="false"
+                                                CssClass="text-muted" style="font-size:0.85rem;"
+                                                Text="No failing categories." />
+                                        </div>
+                                    </div>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                            <asp:Panel ID="EmptyStressMapPanel" runat="server" Visible="false">
+                                <div class="text-center text-muted py-4">All modules are stable.</div>
+                            </asp:Panel>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">QA Debt</h5>
-                        <h2 class="text-warning">
-                            <asp:Label ID="QADebtLabel" runat="server" Text="0"></asp:Label>
-                        </h2>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-col">
+                    <div class="analytics-card">
+                        <div class="analytics-card-title">Tickets by Category</div>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="ticketsChart"></canvas>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Flaky Tests</h5>
-                        <h2 class="text-danger">
-                            <asp:Label ID="FlakyLabel" runat="server" Text="0"></asp:Label>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Missing Tests</h5>
-                        <h2 class="text-info">
-                            <asp:Label ID="MissingTestsLabel" runat="server" Text="0"></asp:Label>
-                        </h2>
+                <div class="chart-col">
+                    <div class="analytics-card">
+                        <div class="analytics-card-title">Vote Sentiment Breakdown</div>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="votesChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Tickets by Type</h5>
-                        <canvas id="typeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Tickets by Status</h5>
-                        <canvas id="statusChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="mb-3">Module Pain Scores</h3>
-        <asp:GridView ID="PainScoreGridView" runat="server" CssClass="table table-striped table-hover"
-            AutoGenerateColumns="false" OnRowDataBound="PainScoreGridView_RowDataBound">
-            <Columns>
-                <asp:BoundField DataField="ModuleName" HeaderText="Module" />
-                <asp:BoundField DataField="OpenQADebt" HeaderText="Open QA Debt" />
-                <asp:BoundField DataField="FlakyCount" HeaderText="Flaky Tests" />
-                <asp:BoundField DataField="Upvotes" HeaderText="Upvotes on QA Debt" />
-                <asp:BoundField DataField="PainScore" HeaderText="Pain Score" />
-            </Columns>
-            <EmptyDataTemplate>
-                <div class="alert alert-info">No modules found for this project.</div>
-            </EmptyDataTemplate>
-        </asp:GridView>
 
         <asp:HiddenField ID="ChartDataHidden" runat="server" />
 
         <script type="text/javascript">
             document.addEventListener('DOMContentLoaded', function () {
-                var chartData = JSON.parse(document.getElementById('<%= ChartDataHidden.ClientID %>').value || '{}');
+                var rawData = document.getElementById('<%= ChartDataHidden.ClientID %>').value;
+                if (!rawData) return;
+                var chartData = JSON.parse(rawData);
 
-                if (chartData.types && chartData.types.length > 0) {
-                    new Chart(document.getElementById('typeChart'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: chartData.typeLabels,
-                            datasets: [{
-                                data: chartData.types,
-                                backgroundColor: ['#0d6efd', '#dc3545', '#ffc107', '#6c757d']
-                            }]
-                        }
-                    });
-                }
-
-                if (chartData.statuses && chartData.statuses.length > 0) {
-                    new Chart(document.getElementById('statusChart'), {
+                // 1. Tickets by Category (Stacked Bar Chart or simple Bar Chart)
+                if (chartData.categories && chartData.categories.length > 0) {
+                    var ctxTickets = document.getElementById('ticketsChart').getContext('2d');
+                    new Chart(ctxTickets, {
                         type: 'bar',
                         data: {
-                            labels: chartData.statusLabels,
+                            labels: chartData.categories,
+                            datasets: [
+                                {
+                                    label: 'To Do',
+                                    data: chartData.todoTickets,
+                                    backgroundColor: '#6c757d',
+                                    borderRadius: 4
+                                },
+                                {
+                                    label: 'In Progress',
+                                    data: chartData.inProgressTickets,
+                                    backgroundColor: '#0d6efd',
+                                    borderRadius: 4
+                                },
+                                {
+                                    label: 'Done',
+                                    data: chartData.doneTickets,
+                                    backgroundColor: '#198754',
+                                    borderRadius: 4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom',
+                                    labels: {
+                                        usePointStyle: true,
+                                        boxWidth: 8
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: { stacked: true, grid: { display: false } },
+                                y: { stacked: true, beginAtZero: true, border: { display: false } }
+                            }
+                        }
+                    });
+                } else {
+                    var canvas = document.getElementById('ticketsChart');
+                    var ctx = canvas.getContext('2d');
+                    ctx.font = '14px Inter, sans-serif';
+                    ctx.fillStyle = '#9ca3af';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('No ticket data', canvas.width / 2, canvas.height / 2);
+                }
+
+                // 2. Vote Sentiment (Doughnut)
+                var ctxVotes = document.getElementById('votesChart').getContext('2d');
+                if (chartData.totalUpvotes > 0 || chartData.totalDownvotes > 0) {
+                    new Chart(ctxVotes, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Stability Upvotes', 'Instability Downvotes'],
                             datasets: [{
-                                label: 'Tickets',
-                                data: chartData.statuses,
-                                backgroundColor: ['#6c757d', '#0d6efd', '#198754']
+                                data: [chartData.totalUpvotes, chartData.totalDownvotes],
+                                backgroundColor: ['#16a34a', '#dc2626'],
+                                borderWidth: 0,
+                                hoverOffset: 4
                             }]
                         },
                         options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '70%',
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom',
+                                    labels: {
+                                        usePointStyle: true,
+                                        boxWidth: 8
+                                    }
                                 }
                             }
                         }
                     });
+                } else {
+                    new Chart(ctxVotes, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['No Votes'],
+                            datasets: [{
+                                data: [1],
+                                backgroundColor: ['#e2e8f0'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '70%',
+                            plugins: { tooltip: { enabled: false }, legend: { display: false } }
+                        }
+                    });
+                    var c = document.getElementById('votesChart');
+                    var ctxxt = c.getContext('2d');
+                    ctxxt.font = '14px Inter, sans-serif';
+                    ctxxt.fillStyle = '#64748b';
+                    ctxxt.textAlign = 'center';
+                    ctxxt.fillText('No Votes Cast', c.width / 2, c.height / 2);
                 }
             });
         </script>

@@ -197,11 +197,11 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
-                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>'>
+                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Core.Models.TicketType)Eval("Type")) %>'>
                                                     <%# Eval("Type") %>
                                                 </span>
                                                 <span
-                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>'>
+                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Core.Models.Priority)Eval("Priority")) %>'>
                                                     <%# Eval("Priority") %>
                                                 </span>
                                             </div>
@@ -247,11 +247,11 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
-                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>'>
+                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Core.Models.TicketType)Eval("Type")) %>'>
                                                     <%# Eval("Type") %>
                                                 </span>
                                                 <span
-                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>'>
+                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Core.Models.Priority)Eval("Priority")) %>'>
                                                     <%# Eval("Priority") %>
                                                 </span>
                                             </div>
@@ -296,11 +296,11 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span
-                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Models.TicketType)Eval("Type")) %>'>
+                                                    class='badge bg-<%# GetTypeBadgeColor((DevBoard.Core.Models.TicketType)Eval("Type")) %>'>
                                                     <%# Eval("Type") %>
                                                 </span>
                                                 <span
-                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Models.Priority)Eval("Priority")) %>'>
+                                                    class='badge bg-<%# GetPriorityBadgeColor((DevBoard.Core.Models.Priority)Eval("Priority")) %>'>
                                                     <%# Eval("Priority") %>
                                                 </span>
                                             </div>

@@ -43,13 +43,13 @@ namespace DevBoard.Pages
                         }
                         else
                         {
-                            Response.Redirect("~/Projects.aspx");
+                            Response.Redirect("~/pages/projects/Projects.aspx");
                         }
                     }
                 }
                 else
                 {
-                    Response.Redirect("~/Projects.aspx");
+                    Response.Redirect("~/pages/projects/Projects.aspx");
                 }
             }
         }
