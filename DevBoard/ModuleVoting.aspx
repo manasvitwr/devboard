@@ -410,8 +410,8 @@
 
                             <div class="module-header" onclick="toggleModule(this)">
                                 <div class='<%# "module-icon " + Eval("IconClass") %>'>
-                                    <i
-                                        class='<%# (bool)Eval("IsCritical") ? "bi bi-exclamation-triangle-fill" : "bi bi-check-circle-fill" %>'></i>
+                                    <img src='<%# (bool)Eval("IsCritical") ? ResolveUrl("~/assets/icons/exclamation-triangle-fill.svg") : ResolveUrl("~/assets/icons/check-circle-fill.svg") %>'
+                                        alt="" width="18" height="18" />
                                 </div>
                                 <div class="module-name">
                                     <%# Eval("Name") %>
@@ -443,12 +443,13 @@
                                             <div class="cat-vote-col">
                                                 <button type="button"
                                                     class='<%# "btn btn-sm vote-btn " + ((int)Eval("UserVote")==1 ? "btn-success" : "btn-outline-success") %>'
-                                                    onclick='castVote(this,<%# Eval("Id") %>,1)' title="Signal issue">
+                                                    onclick='castVote(this,<%# Eval("Id") %>,1)' title="Mark stable">
                                                     <i class="bi bi-hand-thumbs-up"></i>
                                                 </button>
                                                 <button type="button"
                                                     class='<%# "btn btn-sm vote-btn " + ((int)Eval("UserVote")==-1 ? "btn-danger" : "btn-outline-danger") %>'
-                                                    onclick='castVote(this,<%# Eval("Id") %>,-1)' title="De-signal">
+                                                    onclick='castVote(this,<%# Eval("Id") %>,-1)'
+                                                    title="Mark unstable (Signal issue)">
                                                     <i class="bi bi-hand-thumbs-down"></i>
                                                 </button>
                                             </div>
@@ -502,7 +503,7 @@
                                     <strong>
                                         <%# Eval("UserDisplay") %>
                                     </strong>
-                                    <%# (int)Eval("Value")==1 ? "signalled" : "de-signalled" %>
+                                    <%# (int)Eval("Value")==-1 ? "marked unstable" : "marked stable" %>
                                         <strong>
                                             <%# Eval("CategoryName") %>
                                         </strong>
@@ -524,7 +525,7 @@
 
         <!-- Create Issue modal -->
         <div class="modal fade" id="createIssueModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog" style="max-width: 500px; width: 100%;">
                 <div class="modal-content">
                     <div class="modal-header py-2">
                         <h5 class="modal-title">Create Issue</h5>

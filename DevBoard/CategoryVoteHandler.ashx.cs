@@ -82,14 +82,26 @@ namespace DevBoard
                         var vRoles = System.Web.Security.Roles.GetRolesForUser(v.UserId);
                         foreach (var r in vRoles)
                             if (VoteWeights.TryGetValue(r, out int rw) && rw > w) w = rw;
-                        weightedNet += v.Value * w;
+                            // Invert vote direction: Downvote (-1) means "Unstable" (increases stress)
+                            weightedNet += v.Value * -1 * w;
                     }
 
                     int openTickets = category.Tickets.Count(t => t.Status != Status.Done);
 
-                    // Sc = max(0, (WeightedVotes + OpenTickets * SeverityMultiplier) / 100)
-                    decimal sc = Math.Max(0m,
-                        ((decimal)weightedNet + (openTickets * category.SeverityMultiplier)) / 100m);
+                    // ── Gravity Well formula (per votingsys.md §2) ────────────────────────────
+                    // Sc = (CategoryVotes × Wu) + (ΣTicketBoosts × 0.2)
+                    // Load upvotes on open tickets in this category
+                    var openTicketIds = category.Tickets
+                        .Where(t => t.Status != Status.Done)
+                        .Select(t => t.Id)
+                        .ToList();
+                    var ticketBoosts = openTicketIds.Any()
+                        ? ctx.TicketVotes.Count(tv => openTicketIds.Contains(tv.TicketId) && tv.Value == 1)
+                        : 0;
+                    decimal ticketPenalty = ticketBoosts * 0.2m;
+
+                    // Sc = weighted category votes + ticket boost penalty, clamped ≥ 0
+                    decimal sc = Math.Max(0m, (decimal)weightedNet + ticketPenalty);
 
                     int upvotes   = category.Votes.Count(v => v.Value == 1);
                     int downvotes = category.Votes.Count(v => v.Value == -1);
@@ -97,12 +109,13 @@ namespace DevBoard
 
                     var result = new
                     {
-                        netVotes    = weightedNet,
-                        stressScore = (double)Math.Round(sc, 4),
+                        netVotes          = weightedNet,
+                        stressScore       = (double)Math.Round(sc, 4),
+                        ticketBoostPenalty = (double)Math.Round(ticketPenalty, 4),
                         upvotes,
                         downvotes,
                         userVote,
-                        isHighRisk  = sc > 0.5m
+                        isHighRisk        = sc > 0.5m
                     };
 
                     context.Response.Write(new JavaScriptSerializer().Serialize(result));

@@ -82,6 +82,13 @@ namespace DevBoard
                         .Where(t => t.ModuleId.HasValue && moduleIds.Contains(t.ModuleId.Value))
                         .ToList();
 
+                    // Load ticket upvote counts for all tickets in these modules
+                    // (Gravity Well: high ticket boost volume weighs down category health)
+                    var ticketIds = allTickets.Select(t => t.Id).ToList();
+                    var allTicketVotes = ctx.TicketVotes
+                        .Where(tv => ticketIds.Contains(tv.TicketId) && tv.Value == 1)
+                        .ToList();
+
                     // Build weight lookup (call Roles API once per unique user)
                     var userWeightCache = new Dictionary<string, int>();
                     int GetWeight(string uid)
@@ -111,12 +118,22 @@ namespace DevBoard
                                             (!t.CategoryId.HasValue && t.ModuleId == m.Id))
                                 .ToList();
 
-                            int weightedVotes = catVotes.Sum(v => v.Value * GetWeight(v.UserId));
+                            // Invert vote direction: Downvote (-1) means "Unstable" (increases stress)
+                            // Upvote (+1) means "Stable" (decreases stress)
+                            int weightedVotes = catVotes.Sum(v => v.Value * -1 * GetWeight(v.UserId));
                             int openTickets   = catTickets.Count(t => t.Status != Status.Done);
 
-                            // Sc = max(0, (WeightedVotes + OpenTickets x SeverityMultiplier) / 100)
-                            // Clamped at 0: net downvotes reduce stress to zero, not below zero
-                            decimal scRaw = ((decimal)weightedVotes + (openTickets * c.SeverityMultiplier)) / 100m;
+                            // ── Gravity Well formula (per votingsys.md §2) ────────────────────
+                            // Sc = (CategoryVotes × Wu) + (ΣTicketBoosts × 0.2)
+                            // 5 boosts on a ticket ≈ 1 category-level flag.
+                            // Keeps ticket workload pressure visible on module health
+                            // without conflating two distinct signals.
+                            var openTicketIds  = catTickets.Where(t => t.Status != Status.Done).Select(t => t.Id).ToHashSet();
+                            int ticketBoosts   = allTicketVotes.Count(tv => openTicketIds.Contains(tv.TicketId));
+                            decimal ticketPenalty = ticketBoosts * 0.2m;
+
+                            // Sc = weighted category votes + ticket boost penalty, clamped ≥ 0
+                            decimal scRaw = (decimal)weightedVotes + ticketPenalty;
                             decimal sc    = Math.Max(0m, scRaw);
 
                             int userVote = catVotes.FirstOrDefault(v => v.UserId == userId)?.Value ?? 0;
@@ -131,6 +148,7 @@ namespace DevBoard
                                 SeverityMultiplier = c.SeverityMultiplier,
                                 WeightedVotes      = weightedVotes,
                                 OpenTickets        = openTickets,
+                                TicketBoostPenalty = ticketPenalty,
                                 StressScore        = sc,
                                 IsHighRisk         = sc > 0.5m,
                                 BarWidth           = Math.Round(barWidth, 1),
@@ -140,15 +158,16 @@ namespace DevBoard
                             });
                         }
 
-                        // Hm = 100 - avg(Sc) x 100, clamped to [0, 100]
-                        // Sc is already >= 0, so Hm is already <= 100, but clamp both edges to be safe
+                        // Hm = 100 - avg(Sc) × 100, clamped to [0, 100]
+                        // Sc = (WeightedCategoryVotes + TicketBoostPenalty), so 1 unit of Sc = 100% stress.
+                        // avg(Sc) across categories drives the module health bar.
                         double healthPct = 100.0;
                         if (catVMs.Any())
                             healthPct = Math.Min(100.0, Math.Max(0.0,
                                 100.0 - (double)catVMs.Average(c => c.StressScore) * 100.0));
 
                         int healthPctInt = (int)Math.Round(healthPct);
-                        string tab       = (m.IsCritical || healthPctInt < 70) ? "top" : "low";
+                        string tab       = (healthPctInt >= 95) ? "low" : "top";
 
                         moduleVMs.Add(new ModuleViewModel
                         {
@@ -164,6 +183,9 @@ namespace DevBoard
                             Categories     = catVMs
                         });
                     }
+
+                    // Sort by health ascending (most unstable at the top), then critical modules first
+                    moduleVMs = moduleVMs.OrderBy(m => m.HealthPct).ThenByDescending(m => m.IsCritical).ToList();
 
                     ModulesRepeater.DataSource = moduleVMs;
                     ModulesRepeater.DataBind();
@@ -265,7 +287,9 @@ namespace DevBoard
         public decimal SeverityMultiplier { get; set; }
         public int     WeightedVotes      { get; set; }
         public int     OpenTickets        { get; set; }
-        public decimal StressScore        { get; set; }  // Sc
+        /// <summary>ΣTicketBoosts × 0.2 — the Gravity Well contribution from ticket upvotes.</summary>
+        public decimal TicketBoostPenalty { get; set; }
+        public decimal StressScore        { get; set; }  // Sc = WeightedVotes + TicketBoostPenalty
         public bool    IsHighRisk         { get; set; }  // Sc > 0.5
         public double  BarWidth           { get; set; }
         public string  BarColor           { get; set; }
