@@ -12,6 +12,9 @@
     <link href="~/Content/Site.css" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
+    <script type="text/javascript">
+        var APP_ROOT = '<%= ResolveUrl("~/") %>';
+    </script>
 </head>
 <body>
     <form id="form1" runat="server">

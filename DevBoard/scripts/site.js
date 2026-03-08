@@ -14,7 +14,7 @@ function initSortable() {
                 fd.append('action', 'updateStatus');
                 fd.append('ticketId', ticketId);
                 fd.append('status', newStatus);
-                fetch('TicketHandler.ashx', { method: 'POST', body: fd })
+                fetch(APP_ROOT + 'api/TicketHandler.ashx', { method: 'POST', body: fd })
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
                         if (!d.success) console.error('Status update failed:', d.message);
@@ -93,7 +93,7 @@ document.addEventListener('click', function (e) {
     fd.append('ticketId', ticketId);
     fd.append('value', String(clicked));
 
-    fetch('TicketHandler.ashx', { method: 'POST', body: fd })
+    fetch(APP_ROOT + 'api/TicketHandler.ashx', { method: 'POST', body: fd })
         .then(function (r) { return r.json(); })
         .then(function (data) {
             if (!data.success) {

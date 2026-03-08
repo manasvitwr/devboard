@@ -118,6 +118,7 @@
     <Compile Include="core\models\TicketVote.cs" />
     <Compile Include="core\services\ModuleVotingService.cs" />
     <Compile Include="core\services\ProjectService.cs" />
+    <Compile Include="core\services\AnalyticsService.cs" />
     <Compile Include="core\services\TicketService.cs" />
     <Compile Include="api\CategoryVoteHandler.ashx.cs">
       <DependentUpon>CategoryVoteHandler.ashx</DependentUpon>
