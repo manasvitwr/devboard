@@ -91,8 +91,8 @@ namespace DevBoard.Core.Services
             {
                 get
                 {
-                    var diff = DateTime.UtcNow - CreatedAt;
-                    if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m ago";
+                    var diff = DateTime.UtcNow - CreatedAt.ToUniversalTime();
+                    if (diff.TotalMinutes < 60) return $"{(int)Math.Max(1, diff.TotalMinutes)}m ago";
                     if (diff.TotalHours < 24)   return $"{(int)diff.TotalHours}h ago";
                     return $"{(int)diff.TotalDays}d ago";
                 }
