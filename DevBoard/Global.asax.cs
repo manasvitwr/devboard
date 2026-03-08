@@ -1,4 +1,4 @@
-using DevBoard.Models;
+using DevBoard.Core.Models;
 using System;
 using System.Data.Entity;
 using System.Linq;

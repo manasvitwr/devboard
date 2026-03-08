@@ -1,0 +1,57 @@
+using DevBoard.Core.Services;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Web.UI;
+
+namespace DevBoard.Pages
+{
+    public partial class Modules : Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                int projectId;
+                if (int.TryParse(Request.QueryString["projectId"], out projectId))
+                {
+                    using (var context = new DevBoardContext())
+                    {
+                        var projectService = new ProjectService(context);
+                        var project = projectService.GetProjectById(projectId);
+
+                        if (project != null)
+                        {
+                            ProjectNameLabel.Text = project.Name;
+
+                            // Eager-load Categories (+ their Tickets) and Tickets on each Module
+                            var modules = context.Modules
+                                .Where(m => m.ProjectId == projectId)
+                                .Include(m => m.Categories.Select(c => c.Tickets))
+                                .Include(m => m.Tickets)
+                                .ToList();
+
+                            if (modules.Count == 0)
+                            {
+                                EmptyPanel.Visible = true;
+                            }
+                            else
+                            {
+                                ModulesRepeater.DataSource = modules;
+                                ModulesRepeater.DataBind();
+                            }
+                        }
+                        else
+                        {
+                            Response.Redirect("~/Projects.aspx");
+                        }
+                    }
+                }
+                else
+                {
+                    Response.Redirect("~/Projects.aspx");
+                }
+            }
+        }
+    }
+}

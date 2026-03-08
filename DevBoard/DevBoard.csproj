@@ -80,18 +80,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />
-    <Content Include="Default.aspx" />
+    <Content Include="pages\home\Default.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="Kanban.aspx" />
-    <Content Include="Login.aspx" />
-    <Content Include="Modules.aspx" />
-    <Content Include="Projects.aspx" />
-    <Content Include="QADashboard.aspx" />
-    <Content Include="Register.aspx" />
-    <Content Include="Scripts\site.js" />
-    <Content Include="CategoryVoteHandler.ashx" />
-    <Content Include="ModuleVoting.aspx" />
-    <Content Include="TicketHandler.ashx" />
+    <Content Include="pages\kanban\Kanban.aspx" />
+    <Content Include="pages\auth\Login.aspx" />
+    <Content Include="pages\projects\Modules.aspx" />
+    <Content Include="pages\projects\Projects.aspx" />
+    <Content Include="pages\analytics\Analytics.aspx" />
+    <Content Include="pages\auth\Register.aspx" />
+    <Content Include="scripts\site.js" />
+    <Content Include="api\CategoryVoteHandler.ashx" />
+    <Content Include="pages\voting\ModuleVoting.aspx" />
+    <Content Include="api\TicketHandler.ashx" />
     <Content Include="Web.config" />
     <Content Include="assets\logo.svg" />
     <Content Include="assets\icons\login.svg" />
@@ -107,79 +107,79 @@
     <Content Include="assets\icons\hand-thumbs-down.svg" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\DevBoardContext.cs" />
-    <Compile Include="Data\SQLiteConfiguration.cs" />
-    <Compile Include="Models\Category.cs" />
-    <Compile Include="Models\CategoryVote.cs" />
-    <Compile Include="Models\Enums.cs" />
-    <Compile Include="Models\Module.cs" />
-    <Compile Include="Models\Project.cs" />
-    <Compile Include="Models\Ticket.cs" />
-    <Compile Include="Models\TicketVote.cs" />
-    <Compile Include="Services\ModuleVotingService.cs" />
-    <Compile Include="Services\ProjectService.cs" />
-    <Compile Include="Services\TicketService.cs" />
-    <Compile Include="CategoryVoteHandler.ashx.cs">
+    <Compile Include="core\data\DevBoardContext.cs" />
+    <Compile Include="core\data\SQLiteConfiguration.cs" />
+    <Compile Include="core\models\Category.cs" />
+    <Compile Include="core\models\CategoryVote.cs" />
+    <Compile Include="core\models\Enums.cs" />
+    <Compile Include="core\models\Module.cs" />
+    <Compile Include="core\models\Project.cs" />
+    <Compile Include="core\models\Ticket.cs" />
+    <Compile Include="core\models\TicketVote.cs" />
+    <Compile Include="core\services\ModuleVotingService.cs" />
+    <Compile Include="core\services\ProjectService.cs" />
+    <Compile Include="core\services\TicketService.cs" />
+    <Compile Include="api\CategoryVoteHandler.ashx.cs">
       <DependentUpon>CategoryVoteHandler.ashx</DependentUpon>
     </Compile>
-    <Compile Include="ModuleVoting.aspx.cs">
+    <Compile Include="pages\voting\ModuleVoting.aspx.cs">
       <DependentUpon>ModuleVoting.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ModuleVoting.aspx.designer.cs">
+    <Compile Include="pages\voting\ModuleVoting.aspx.designer.cs">
       <DependentUpon>ModuleVoting.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Default.aspx.cs">
+    <Compile Include="pages\home\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Default.aspx.designer.cs">
+    <Compile Include="pages\home\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Kanban.aspx.cs">
+    <Compile Include="pages\kanban\Kanban.aspx.cs">
       <DependentUpon>Kanban.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Kanban.aspx.designer.cs">
+    <Compile Include="pages\kanban\Kanban.aspx.designer.cs">
       <DependentUpon>Kanban.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Login.aspx.cs">
+    <Compile Include="pages\auth\Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Login.aspx.designer.cs">
+    <Compile Include="pages\auth\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Modules.aspx.cs">
+    <Compile Include="pages\projects\Modules.aspx.cs">
       <DependentUpon>Modules.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Modules.aspx.designer.cs">
+    <Compile Include="pages\projects\Modules.aspx.designer.cs">
       <DependentUpon>Modules.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Projects.aspx.cs">
+    <Compile Include="pages\projects\Projects.aspx.cs">
       <DependentUpon>Projects.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Projects.aspx.designer.cs">
+    <Compile Include="pages\projects\Projects.aspx.designer.cs">
       <DependentUpon>Projects.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QADashboard.aspx.cs">
-      <DependentUpon>QADashboard.aspx</DependentUpon>
+    <Compile Include="pages\analytics\Analytics.aspx.cs">
+      <DependentUpon>Analytics.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="QADashboard.aspx.designer.cs">
-      <DependentUpon>QADashboard.aspx</DependentUpon>
+    <Compile Include="pages\analytics\Analytics.aspx.designer.cs">
+      <DependentUpon>Analytics.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Register.aspx.cs">
+    <Compile Include="pages\auth\Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Register.aspx.designer.cs">
+    <Compile Include="pages\auth\Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
     <Compile Include="Security\SQLiteProviders.cs" />
